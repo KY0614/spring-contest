@@ -1,8 +1,4 @@
 #pragma once
-#include <DxLib.h>
-class time
-{
+#include <Dxlib.h>
 
-	
-};
 
