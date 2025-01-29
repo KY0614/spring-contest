@@ -17,11 +17,11 @@ void Player::MoveUpdeta(void)
 {
 
 }
-void Draw(void)
+void Player::Draw(void)
 {
 
 }
-void Rerease(void)
+void Player::Rerease(void)
 {
 
 }
