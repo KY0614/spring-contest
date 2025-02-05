@@ -2,7 +2,7 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
-#include "../Player.h"
+#include "../Object/Player.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)

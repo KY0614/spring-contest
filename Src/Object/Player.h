@@ -17,6 +17,9 @@ private:
 
 
 
+	//デバッグ
+	int count_;
+	int cr_;
 
 public:
 	//
