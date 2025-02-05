@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
 #include "SceneBase.h"
+class Player;
 
 class GameScene : public SceneBase
 {
@@ -18,5 +19,6 @@ public:
 	void Draw(void) override;
 
 private:
+	Player* player_;
 
 };
