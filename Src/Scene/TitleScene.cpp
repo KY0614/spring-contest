@@ -37,4 +37,6 @@ void TitleScene::Update(void)
 void TitleScene::Draw(void)
 {
 	DrawString(0, 0, "title", 0xFFFFFF);
+
+	DrawString(0, 20, "test", 0xffffff);
 }
