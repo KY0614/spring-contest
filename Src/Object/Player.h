@@ -3,6 +3,24 @@ class Player
 {
 
 public:
+	//定数
+
+
+
+private:
+	//変数
+	
+
+	//座標保存用
+	int posX_;
+	int posY_;
+
+
+
+
+public:
+	//
+
 	//初期化
 	void Init(void);
 	//アプデ
@@ -13,10 +31,6 @@ public:
 	void Draw(void);
 	//削除
 	void Rerease(void);
-
-private:
-
-
 
 };
 
