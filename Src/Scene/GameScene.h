@@ -2,6 +2,8 @@
 #include <memory>
 #include "SceneBase.h"
 
+class Block;
+
 class GameScene : public SceneBase
 {
 
@@ -18,5 +20,5 @@ public:
 	void Draw(void) override;
 
 private:
-
+	Block* block_;
 };

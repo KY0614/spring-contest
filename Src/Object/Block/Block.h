@@ -18,5 +18,6 @@ public:
 	void Release(void);
 
 private:
+	int img_;
 };
 
