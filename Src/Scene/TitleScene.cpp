@@ -18,7 +18,11 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
+	//サウンド読み込み
+	bgmHandle_ = LoadSoundMem();
 
+	//BGMスタート
+	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 }
 
 void TitleScene::Update(void)
@@ -28,6 +32,9 @@ void TitleScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
+		//BGM停止
+		StopSoundMem(bgmHandle_);
+
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 	}
 
@@ -37,6 +44,4 @@ void TitleScene::Update(void)
 void TitleScene::Draw(void)
 {
 	DrawString(0, 0, "title", 0xFFFFFF);
-
-	DrawString(0, 20, "test", 0xffffff);
 }

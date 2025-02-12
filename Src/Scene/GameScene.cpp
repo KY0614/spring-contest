@@ -15,7 +15,11 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	//サウンド読み込み
+	bgmHandle_ = LoadSoundMem();
 
+	//BGMスタート
+	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 
 }
 
