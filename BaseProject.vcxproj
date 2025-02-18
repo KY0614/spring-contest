@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Block\BlockBase.cpp" />
     <ClCompile Include="Src\Object\Block\Block.cpp" />
     <ClCompile Include="Src\Object\Block\BlockManager.cpp" />
     <ClCompile Include="Src\Object\Player.cpp" />
@@ -36,6 +37,7 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Block\BlockBase.h" />
     <ClInclude Include="Src\Object\Block\Block.h" />
     <ClInclude Include="Src\Object\Block\BlockManager.h" />
     <ClInclude Include="Src\Object\Player.h" />
