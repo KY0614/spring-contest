@@ -1,12 +1,10 @@
 #include <DxLib.h>
 #include "../../Application.h"
 #include "../../Manager/ResourceManager.h"
+#include "BlockBase.h"
 #include "Block.h"
 
-Block::Block(void)
-{
-	img_ = -1;
-}
+Block::Block(Vector2 pos, int angle, bool isHold, int img) : BlockBase(pos, angle,isHold,img){}
 
 Block::~Block(void)
 {
@@ -22,6 +20,7 @@ void Block::Init(void)
 	{
 		return;
 	}
+
 }
 
 void Block::Update(void)
@@ -37,4 +36,12 @@ void Block::Draw(void)
 
 void Block::Release(void)
 {
+}
+
+void Block::SetParam(void)
+{
+	img_ = 0;
+	angle_ = 0;
+	isHold_ = false;
+	pos_ = { 0,0 };
 }

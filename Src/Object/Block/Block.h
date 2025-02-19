@@ -1,23 +1,28 @@
 //#pragma once
+#include "BlockBase.h"
 
-class Block
+class Block : public  BlockBase
 {
 public:
 
 	static constexpr int BLOCK_SIZE = 320;
 
 	//コンストラクタ	
-	Block(void);
+	Block(Vector2 pos, int angle, bool isHold, int img);
 
 	//デストラクタ
-	~Block(void);
+	~Block(void) = default;
 
-	void Init(void);
-	void Update(void);
-	void Draw(void);
-	void Release(void);
+	void Init(void) override;
+	void Update(void)override;
+	void Draw(void)override;
+	void Release(void)override;
+
+protected:
+
+	void SetParam(void)override;
 
 private:
-	int img_;
+
 };
 

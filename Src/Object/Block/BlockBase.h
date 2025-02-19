@@ -5,16 +5,31 @@
 class BlockBase
 {
 public:
+	static constexpr int IMAGE_SCALSE = 300;
 
-	BlockBase(int startX, int startY, int img);
+	BlockBase(Vector2 pos, int angle, bool isHold, int img);
 
 	virtual ~BlockBase() = default;
 
+	virtual void Init(void);
+	virtual void Update(void);
+	virtual void Draw(void);
+	virtual void Release(void);
+
+	void SetPos(Vector2 pos) {pos_ = pos;}
+	Vector2 GetPos(void) { return pos_; }
+
+	void RightRotate(void);
+	void LeftRotate(void);
+
+	virtual void SetParam(void) = 0;
+
 protected:
-	int img_;
-	bool isHold_;
-	float angle_;
-	Vector2 pos_;
+
+	int img_;		//âÊëú
+	bool isHold_;	//
+	float angle_;	//äpìx
+	Vector2 pos_;	//ç¿ïW(intå^)
 
 private:
 
