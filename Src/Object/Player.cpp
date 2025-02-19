@@ -1,6 +1,7 @@
 
 
 #include "../Manager/InputManager.h"
+#include"../Application.h"
 #include "Player.h"
 #include <DxLib.h>
 
@@ -23,17 +24,38 @@ void Player::Updeta(void)
 void Player::MoveMouseUpdeta(void)
 {
 	//マウス座標取得用
-	int mousPosX, mousPosY;
+	int mousePosX, mousePosY;
 	//マウス座標取得
-	GetMousePoint(&mousPosX, &mousPosY);
+	GetMousePoint(&mousePosX, &mousePosY);
 	//座標保存
-	mousePosX_ = mousPosX;
-	mousePosY_ = mousPosY;
-	
+	mousePosX_ = mousePosX;
+	mousePosY_ = mousePosY;
+	//移動制限
+	//左制限
+	if (mousePosX_ < 0)
+	{
+		SetMousePoint(0, mousePosY);
+	}
+	//右制限
+	if (mousePosX_ > Application::SCREEN_SIZE_X)
+	{
+		SetMousePoint(Application::SCREEN_SIZE_X, mousePosY);
+	}
+	//上
+	if (mousePosY_ < 0)
+	{
+		SetMousePoint(mousePosX,0);
+	}
+	//下制限
+	if (mousePosY_ > Application::SCREEN_SIZE_Y)
+	{
+		SetMousePoint(mousePosX, Application::SCREEN_SIZE_Y);
+	}
 }
 void Player::MoveKeyUpdata(void)
 {
 	InputManager& ins = InputManager::GetInstance();
+
 	//上移動
 	if (ins.IsTrgDown(KEY_INPUT_W))
 	{
@@ -53,6 +75,29 @@ void Player::MoveKeyUpdata(void)
 	if (ins.IsTrgDown(KEY_INPUT_A))
 	{
 		boxPosX_ -= MOVE_X;
+	}
+
+
+	//移動制限
+	//右制限
+	if (boxPosX_ > Application::SCREEN_SIZE_X-SIZE_X)
+	{
+		boxPosX_ = Application::SCREEN_SIZE_X - SIZE_X;
+	}
+	//左制限
+	if (boxPosX_ < 0)
+	{
+		boxPosX_ = 0;
+	}
+	//上制限
+	if (boxPosY_ < 0)
+	{
+		boxPosY_ = 0;
+	}
+	//下制限
+	if (boxPosY_ > Application::SCREEN_SIZE_Y - SIZE_Y)
+	{
+		boxPosY_ = Application::SCREEN_SIZE_Y - SIZE_Y;
 	}
 }
 
