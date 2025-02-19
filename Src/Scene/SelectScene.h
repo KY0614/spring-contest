@@ -1,22 +1,20 @@
-//#pragma once
+#pragma once
 #include "SceneBase.h"
 
-
-class TitleScene : public SceneBase
+class SelectScene : public SceneBase
 {
-
 public:
 
 	// コンストラクタ
-	TitleScene(void);
+	SelectScene(void);
 
 	// デストラクタ
-	~TitleScene(void);
+	~SelectScene(void);
 
 	void Init(void) override;
 	void Update(void) override;
 	void Draw(void) override;
 
 private:
-
 };
+

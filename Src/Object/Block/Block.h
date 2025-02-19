@@ -6,9 +6,9 @@ class Block : public  BlockBase
 public:
 
 	static constexpr int BLOCK_SIZE = 320;
-
+	
 	//コンストラクタ	
-	Block(Vector2 pos, int angle, bool isHold, int img);
+	Block(void);
 
 	//デストラクタ
 	~Block(void) = default;

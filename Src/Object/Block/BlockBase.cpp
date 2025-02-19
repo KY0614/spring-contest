@@ -1,7 +1,7 @@
 #include <DxLib.h>
 #include "BlockBase.h"
 
-BlockBase::BlockBase(Vector2 pos,int angle, bool isHold, int img) : pos_(pos), angle_(angle), isHold_(isHold), img_(img)
+BlockBase::BlockBase(void)
 {
 }
 

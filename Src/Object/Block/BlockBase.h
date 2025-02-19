@@ -7,9 +7,9 @@ class BlockBase
 public:
 	static constexpr int IMAGE_SCALSE = 300;
 
-	BlockBase(Vector2 pos, int angle, bool isHold, int img);
+	BlockBase(void);
 
-	virtual ~BlockBase() = default;
+	~BlockBase() = default;
 
 	virtual void Init(void);
 	virtual void Update(void);

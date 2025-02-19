@@ -4,10 +4,9 @@
 #include "BlockBase.h"
 #include "Block.h"
 
-Block::Block(Vector2 pos, int angle, bool isHold, int img) : BlockBase(pos, angle,isHold,img){}
-
-Block::~Block(void)
+Block::Block(void)
 {
+
 }
 
 void Block::Init(void)
