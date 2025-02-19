@@ -19,7 +19,7 @@ TitleScene::~TitleScene(void)
 void TitleScene::Init(void)
 {
 	//サウンド読み込み
-	bgmHandle_ = LoadSoundMem();
+	//bgmHandle_ = LoadSoundMem();
 
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);

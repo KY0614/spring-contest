@@ -16,7 +16,7 @@ GameScene::~GameScene(void)
 void GameScene::Init(void)
 {
 	//サウンド読み込み
-	bgmHandle_ = LoadSoundMem();
+	//bgmHandle_ = LoadSoundMem();
 
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
@@ -30,6 +30,10 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
+
+		//BGM停止
+		StopSoundMem(bgmHandle_);
+
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
