@@ -15,14 +15,17 @@ void Player::Init(void)
 	count_ = 0;
 	cr_ = 0x000000;
 }
+//プレイヤー全体更新
 void Player::Updeta(void)
 {
 	MoveMouseUpdeta();
 	MoveKeyUpdata();
 	InputUpdeta();
 }
+//カーソル更新
 void Player::MoveMouseUpdeta(void)
 {
+	SetMouseDispFlag(false);
 	//マウス座標取得用
 	int mousePosX, mousePosY;
 	//マウス座標取得
@@ -52,6 +55,7 @@ void Player::MoveMouseUpdeta(void)
 		SetMousePoint(mousePosX, Application::SCREEN_SIZE_Y);
 	}
 }
+//キー入力更新
 void Player::MoveKeyUpdata(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -100,7 +104,7 @@ void Player::MoveKeyUpdata(void)
 		boxPosY_ = Application::SCREEN_SIZE_Y - SIZE_Y;
 	}
 }
-
+//マウス入力更新
 void Player::InputUpdeta(void)
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -128,7 +132,7 @@ void Player::InputUpdeta(void)
 
 void Player::Draw(void)
 {
-
+	DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, false);
 
 
 
@@ -137,7 +141,6 @@ void Player::Draw(void)
 	DrawFormatString(0, 40, 0xffffff, "Y%d", mousePosY_);
 	DrawFormatString(0, 60, 0xffffff, "count%d", count_);
 	DrawBox(100, 100, 200, 200, cr_, true);
-	DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, true);
 }
 void Player::Rerease(void)
 {
