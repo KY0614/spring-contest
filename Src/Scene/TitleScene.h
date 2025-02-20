@@ -19,4 +19,7 @@ public:
 
 private:
 
+	//ƒTƒEƒ“ƒh
+	int bgmHandle_;		//BGM
+
 };

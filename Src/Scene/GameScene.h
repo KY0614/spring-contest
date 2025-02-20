@@ -20,4 +20,6 @@ public:
 private:
 	Player* player_;
 
+	//ƒTƒEƒ“ƒh
+	int bgmHandle_;		//BGM
 };

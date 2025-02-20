@@ -17,6 +17,12 @@ GameScene::~GameScene(void)
 
 void GameScene::Init(void)
 {
+	//サウンド読み込み
+	//bgmHandle_ = LoadSoundMem();
+
+	//BGMスタート
+	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
+
 	player_ = new Player;
 	player_->Init();
 }
@@ -28,6 +34,11 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
+
+		//BGM停止
+		StopSoundMem(bgmHandle_);
+
+		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 
