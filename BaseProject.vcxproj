@@ -19,6 +19,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\GameClearScene.cpp" />
+    <ClCompile Include="Src\Scene\SelectScene.cpp" />
+    <ClCompile Include="Src\Object\Block\BlockBase.cpp" />
+    <ClCompile Include="Src\Object\Block\Block.cpp" />
+    <ClCompile Include="Src\Object\Block\BlockManager.cpp" />
     <ClCompile Include="Src\Object\Player.cpp" />
     <ClCompile Include="Src\Application.cpp" />
     <ClCompile Include="Src\Common\Fader.cpp" />
@@ -34,6 +39,11 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\GameClearScene.h" />
+    <ClInclude Include="Src\Scene\SelectScene.h" />
+    <ClInclude Include="Src\Object\Block\BlockBase.h" />
+    <ClInclude Include="Src\Object\Block\Block.h" />
+    <ClInclude Include="Src\Object\Block\BlockManager.h" />
     <ClInclude Include="Src\Object\Player.h" />
     <ClInclude Include="Src\Application.h" />
     <ClInclude Include="Src\Common\Fader.h" />

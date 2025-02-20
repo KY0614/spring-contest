@@ -2,7 +2,8 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
-#include "../Player.h"
+#include "../Object/Player.h"
+#include "../Object/Block/Block.h"
 #include "GameScene.h"
 
 GameScene::GameScene(void)
@@ -18,7 +19,6 @@ void GameScene::Init(void)
 {
 	player_ = new Player;
 	player_->Init();
-
 }
 
 void GameScene::Update(void)
@@ -28,7 +28,7 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 	if (ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 
 }

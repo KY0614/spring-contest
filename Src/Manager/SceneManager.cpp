@@ -3,7 +3,9 @@
 #include <EffekseerForDXLib.h>
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
+#include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/GameClearScene.h"
 #include "ResourceManager.h"
 #include "SceneManager.h"
 
@@ -203,9 +205,15 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	{
 	case SCENE_ID::TITLE:
 		scene_ = std::make_unique<TitleScene>();
+		break;	
+	case SCENE_ID::SELECT:
+		scene_ = std::make_unique<SelectScene>();
 		break;
 	case SCENE_ID::GAME:
 		scene_ = std::make_unique<GameScene>();
+		break;	
+	case SCENE_ID::GAMECLEAR:
+		scene_ = std::make_unique<GameClearScene>();
 		break;
 	}
 

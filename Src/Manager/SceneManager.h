@@ -18,8 +18,10 @@ public:
 	enum class SCENE_ID
 	{
 		NONE,
+		SELECT,
 		TITLE,
-		GAME
+		GAME,
+		GAMECLEAR,
 	};
 	
 	// インスタンスの生成
