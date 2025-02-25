@@ -2,7 +2,7 @@
 #include "../Utility/AsoUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
-#include "../Object/Player.h"
+#include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
 #include "GameScene.h"
 
@@ -46,6 +46,7 @@ void GameScene::Update(void)
 
 void GameScene::Draw(void)
 {
+	
 	DrawString(0, 0, "game", 0xFFFFFF);
 	player_->Draw();
 }

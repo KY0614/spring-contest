@@ -1,19 +1,29 @@
 
-
-#include "../Manager/InputManager.h"
-#include"../Application.h"
-#include "Player.h"
 #include <DxLib.h>
+#include "../../Application.h"
+#include "../../Manager/InputManager.h"
+#include "../../Manager/ResourceManager.h"
+#include "Player.h"
+
 
 
 void Player::Init(void)
 {
+	auto& res = ResourceManager::GetInstance();
+
+	//画像読み込み
+	img_ = res.Load(ResourceManager::SRC::PLAYER).handleId_;
+	if (img_ == -1)
+	{
+		return;
+	}
 	boxPosX_ = 0;
 	boxPosY_ = 0;
 	mousePosX_ = 0;
 	mousePosY_ = 0;
 	count_ = 0;
 	cr_ = 0x000000;
+
 }
 //プレイヤー全体更新
 void Player::Updeta(void)
@@ -84,7 +94,7 @@ void Player::MoveKeyUpdata(void)
 
 	//移動制限
 	//右制限
-	if (boxPosX_ > Application::SCREEN_SIZE_X-SIZE_X)
+	if (boxPosX_ > Application::SCREEN_SIZE_X - SIZE_X)
 	{
 		boxPosX_ = Application::SCREEN_SIZE_X - SIZE_X;
 	}
@@ -133,7 +143,9 @@ void Player::InputUpdeta(void)
 void Player::Draw(void)
 {
 	DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, false);
-
+	DrawRotaGraph(mousePosX_+30,
+		mousePosY_+30,
+		1.0f, 0.0f, img_, true, false);
 
 
 	//デバッグ

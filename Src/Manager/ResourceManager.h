@@ -13,8 +13,9 @@ public:
 	enum class SRC
 	{
 		TITLE,
+		SELECT,//セレクト
 		BLOCK,	//ブロック
-
+		PLAYER,//プレイヤー
 	};
 
 	// 明示的にインステンスを生成する
