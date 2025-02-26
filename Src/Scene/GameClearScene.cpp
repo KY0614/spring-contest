@@ -27,5 +27,6 @@ void GameClearScene::Update(void)
 
 void GameClearScene::Draw(void)
 {
+	
 	DrawString(0, 0, "clear", 0xFFFFFF);
 }

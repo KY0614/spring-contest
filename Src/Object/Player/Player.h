@@ -1,4 +1,4 @@
-#pragma once
+//#pragma once
 class Player
 {
 
@@ -28,6 +28,9 @@ private:
 	//デバッグ
 	int count_;
 	int cr_;
+
+	//画像
+	int img_;
 
 public:
 	//

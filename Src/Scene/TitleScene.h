@@ -22,4 +22,10 @@ private:
 	//サウンド
 	int bgmHandle_;		//BGM
 
+	int img_;//画像
+	int loopCount;						//文字カウント
+	int FontHandle;
+	int StrLen;
+	bool moziFlag;						//文字フラグ
+
 };
