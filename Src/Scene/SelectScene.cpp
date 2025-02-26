@@ -21,7 +21,7 @@ void SelectScene::Init(void)
 	{
 		return;
 	}
-	select_ = SELECT_TYPE::EASY;  // デフォルトは「開始」
+	select_ = SELECT_TYPE::EASY;  // デフォルトは「簡単」
 	changeFlag_ = false;
 	inputLock_ = false;  // 入力ロックフラグを追加
 	stateFlag_ = false;
