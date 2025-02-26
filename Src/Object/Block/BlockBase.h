@@ -5,7 +5,7 @@
 class BlockBase
 {
 public:
-	static constexpr int IMAGE_SCALSE = 300;
+	static constexpr int IMAGE_SCALSE = 320;
 
 	BlockBase(void);
 
