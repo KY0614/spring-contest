@@ -147,12 +147,11 @@ void Player::Draw(void)
 		mousePosY_+30,
 		1.0f, 0.0f, img_, true, false);
 
-
 	//デバッグ
 	DrawFormatString(0, 20, 0xffffff, "X%d", mousePosX_);
 	DrawFormatString(0, 40, 0xffffff, "Y%d", mousePosY_);
-	DrawFormatString(0, 60, 0xffffff, "count%d", count_);
-	DrawBox(100, 100, 200, 200, cr_, true);
+	//DrawFormatString(0, 60, 0xffffff, "count%d", count_);
+	//DrawBox(100, 100, 200, 200, cr_, true);
 }
 void Player::Rerease(void)
 {
