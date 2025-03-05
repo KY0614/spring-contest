@@ -33,5 +33,8 @@ private:
 	bool inputLock_;  // 入力ロックフラグを追加
 	bool stateFlag_;	 //無効かフラグ
 	float lockTimer_;      // ロック時間用変数
+
+	//サウンド
+	int bgmHandle_;		//BGM
 };
 
