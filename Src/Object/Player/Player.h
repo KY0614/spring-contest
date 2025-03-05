@@ -32,6 +32,9 @@ private:
 	//画像
 	int img_;
 
+	//クリック
+	bool inputLFlag_;
+	bool inputRFlag_;
 public:
 	//
 
@@ -49,6 +52,9 @@ public:
 	void Draw(void);
 	//削除
 	void Rerease(void);
+	//クリック
+	bool GetIsInputL(void);
+	bool GetIsInputR(void);
 
 };
 

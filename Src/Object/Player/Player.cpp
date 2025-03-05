@@ -23,7 +23,9 @@ void Player::Init(void)
 	mousePosY_ = 0;
 	count_ = 0;
 	cr_ = 0x000000;
-
+	//クリック
+	inputLFlag_ = false;
+	inputRFlag_ = false;
 }
 //プレイヤー全体更新
 void Player::Updeta(void)
@@ -121,25 +123,25 @@ void Player::InputUpdeta(void)
 	//左クリック
 	if (ins.IsTrgMouseLeft())
 	{
-		count_ += 1;
+		inputLFlag_ = true;
+	}
+	else
+	{
+		inputLFlag_ = false;
 	}
 
 	//右クリック
 	if (ins.IsTrgMouseRight())
 	{
-		count_ += 1;
-	}
-	//デバッグ
-	if ((count_ % 2) == 0)
-	{
-		cr_ = 0xffffff;
+		inputRFlag_ = true;
 	}
 	else
 	{
-		cr_ = 0x000000;
+		inputRFlag_ = false;
 	}
-}
 
+}
+//画像
 void Player::Draw(void)
 {
 	DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, false);
@@ -149,12 +151,22 @@ void Player::Draw(void)
 
 
 	////デバッグ
-	//DrawFormatString(0, 20, 0xffffff, "X%d", mousePosX_);
-	//DrawFormatString(0, 40, 0xffffff, "Y%d", mousePosY_);
+	/*DrawFormatString(0, 20, 0xffffff, "X%d", inputLFlag_);
+	DrawFormatString(0, 40, 0xffffff, "Y%d", inputRFlag_);*/
 	//DrawFormatString(0, 60, 0xffffff, "count%d", count_);
 	//DrawBox(100, 100, 200, 200, cr_, true);
 }
 void Player::Rerease(void)
 {
 
+}
+//ゲット・セット
+bool Player::GetIsInputL(void)
+{
+	return inputLFlag_;
+}
+
+bool Player::GetIsInputR(void)
+{
+	return inputRFlag_;
 }
