@@ -18,7 +18,10 @@ GameScene::~GameScene(void)
 void GameScene::Init(void)
 {
 	//サウンド読み込み
-	//bgmHandle_ = LoadSoundMem();
+	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber40.mp3");
+
+	//音量調整
+	ChangeVolumeSoundMem(255 * 30 / 100, bgmHandle_);
 
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
