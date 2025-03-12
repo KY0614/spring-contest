@@ -18,8 +18,13 @@ TitleScene::~TitleScene(void)
 
 void TitleScene::Init(void)
 {
+	
 	//ƒTƒEƒ“ƒh“Ç‚İ‚İ
-	//bgmHandle_ = LoadSoundMem();
+	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber41.mp3");
+
+	//‰¹—Ê’²®
+	ChangeVolumeSoundMem(255* 30 / 100,bgmHandle_);
+
 	auto& res = ResourceManager::GetInstance();
 
 	//‰æ‘œ“Ç‚İ‚İ

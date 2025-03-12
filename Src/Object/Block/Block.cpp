@@ -1,12 +1,13 @@
 #include <DxLib.h>
 #include "../../Application.h"
 #include "../../Manager/ResourceManager.h"
+#include "../../Manager/InputManager.h"
 #include "BlockBase.h"
 #include "Block.h"
 
-Block::Block(void)
+Block::Block(Vector2 pos, int img):BlockBase(pos,img)
 {
-
+	connections = { {0,0},{1,1} };
 }
 
 void Block::Init(void)
@@ -24,23 +25,18 @@ void Block::Init(void)
 
 void Block::Update(void)
 {
-}
-
-void Block::Draw(void)
-{
-	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
-		Application::SCREEN_SIZE_Y / 2,
-		1.0f, 0.0f,img_, true, false);
-}
-
-void Block::Release(void)
-{
+	auto& ins = InputManager::GetInstance();
+	if (isHold_)
+	{
+		pos_ = ins.GetMousePos();
+	}
 }
 
 void Block::SetParam(void)
 {
 	img_ = 0;
-	angle_ = 0;
+	rotate_ = 0;
 	isHold_ = false;
 	pos_ = { 0,0 };
+	UpdateConnections();
 }

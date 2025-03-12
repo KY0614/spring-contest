@@ -29,4 +29,10 @@ void GameClearScene::Draw(void)
 {
 	
 	DrawString(0, 0, "clear", 0xFFFFFF);
+
+	//ÉNÉäÉAï\é¶
+
+	SetFontSize(160);
+	DrawString(100, 100, "GAMECLEAR", 0xffffff);
+	SetFontSize(16);
 }
