@@ -35,6 +35,8 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title.png");
 	resourcesMap_.emplace(SRC::TITLE, std::move(res));
 
+	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "TitleR.png");
+	resourcesMap_.emplace(SRC::TITLER, std::move(res));
 	// ƒZƒŒƒNƒg‰æ‘œ
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "haikei.png");
 	resourcesMap_.emplace(SRC::SELECT, std::move(res));

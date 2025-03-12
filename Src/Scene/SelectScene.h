@@ -23,13 +23,16 @@ public:
 	void Draw(void) override;
 
 	void State(void);
+	int GetSelectNo(void);
 private:
 
 	int img_;
+	int selectNo;
 	SELECT_TYPE select_;
 	bool changeFlag_;
 	bool isUpPressed_;
 	bool isDownPressed_;
+
 	bool inputLock_;  // 入力ロックフラグを追加
 	bool stateFlag_;	 //無効かフラグ
 	float lockTimer_;      // ロック時間用変数

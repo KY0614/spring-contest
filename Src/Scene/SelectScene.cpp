@@ -26,6 +26,7 @@ void SelectScene::Init(void)
 	inputLock_ = false;  // 入力ロックフラグを追加
 	stateFlag_ = false;
 	lockTimer_ = 0;      // ロック時間用変数
+	selectNo = 0;
 
 	//サウンド読み込み
 	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber22.mp3");
@@ -35,6 +36,7 @@ void SelectScene::Init(void)
 
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
+	selectNo = 0;
 }
 
 void SelectScene::Update(void)
@@ -130,15 +132,22 @@ void SelectScene::State(void)
 
 		if (select_ == SELECT_TYPE::EASY)
 		{
+			selectNo = 1;
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		}
 		if (select_ == SELECT_TYPE::NORMAL)
 		{
+			selectNo = 2;
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		}
 		if (select_ == SELECT_TYPE::HARD)
 		{
+			selectNo = 3;
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		}
 	}
+}
+int SelectScene::GetSelectNo(void)
+{
+	return selectNo;
 }

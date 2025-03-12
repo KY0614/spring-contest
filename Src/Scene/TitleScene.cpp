@@ -33,7 +33,21 @@ void TitleScene::Init(void)
 	{
 		return;
 	}
+	//画像読み込み
+	imgr_ = res.Load(ResourceManager::SRC::TITLER).handleId_;
+	if (img_ == -1)
+	{
+		return;
+	}
+	imgBlock_ = res.Load(ResourceManager::SRC::BLOCK).handleId_;
+	if (img_ == -1)
+	{
+		return;
+	}
+	rotate_ = 0.0f;
 	loopCount = 0;//カウント
+	cr_ = 0xFFFFFF;
+	count_ = 0;
 	moziFlag = true;//描画フラグ
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
@@ -42,6 +56,13 @@ void TitleScene::Init(void)
 
 void TitleScene::Update(void)
 {
+
+	rotate_ += 1 * DX_PI_F / 180;
+	if (rotate_ >= 360 * DX_PI_F / 180)
+	{
+		rotate_ = 0.0;
+	}
+
 
 	// シーン遷移
 	InputManager& ins = InputManager::GetInstance();
@@ -77,19 +98,28 @@ void TitleScene::Draw(void)
 {
 	SetFontSize(16);
 
-
+	DrawBox(0, 0, Application::SCREEN_SIZE_X/2,
+		Application::SCREEN_SIZE_Y, cr_, true);
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2-155,
+		Application::SCREEN_SIZE_Y / 2+63,
+		0.45f, rotate_, imgBlock_, true, false);
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		1.0f, 0.0f, imgr_, true, false);
 	
-	DrawString(0, 0, "title", 0xFFFFFF);
+	DrawString(0, 0, "title", cr_);
 
 	int StrLen;
 	StrLen = strlen("スペースを押して次へ");
 	if (moziFlag == true)
 	{
 		SetFontSize(64);
-		DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("スペースを押して次へ", StrLen)) / 2, Application::SCREEN_SIZE_Y / 2 + 180, "スペースを押して次へ", 0xffffff);
+		DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("スペースを押して次へ", StrLen)) / 2, Application::SCREEN_SIZE_Y / 2 + 180, "スペースを押して次へ", cr_);
 	}
 	SetFontSize(16);
+
+	
 }

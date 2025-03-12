@@ -13,6 +13,7 @@ public:
 	enum class SRC
 	{
 		TITLE,
+		TITLER,
 		SELECT,//セレクト
 		BLOCK,	//ブロック
 		PLAYER,//プレイヤー

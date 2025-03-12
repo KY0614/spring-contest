@@ -1,4 +1,5 @@
-//#pragma once
+#pragma once
+
 #include "SceneBase.h"
 
 
@@ -23,6 +24,11 @@ private:
 	int bgmHandle_;		//BGM
 
 	int img_;//画像
+	int imgr_;
+	int imgBlock_;
+	float rotate_;	//角度
+	int count_;
+	int cr_;
 	int loopCount;						//文字カウント
 	int FontHandle;
 	int StrLen;
