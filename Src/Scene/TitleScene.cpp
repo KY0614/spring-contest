@@ -32,6 +32,7 @@ void TitleScene::Init(void)
 	moziFlag = true;//描画フラグ
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
+
 }
 
 void TitleScene::Update(void)
