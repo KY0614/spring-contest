@@ -25,9 +25,6 @@ public:
 private:
 	Player* player_;
 
-	//サウンド
-	int bgmHandle_;		//BGM
-
 	std::vector<BlockBase*> blocks;
 	BlockBase* selectBlock;
 	BlockBase* startBlock;
@@ -38,9 +35,16 @@ private:
 
 	int img_;
 
+	int bgmHandle_;			//bgm
+
+	Vector2 highlightPos_;	//ハイライト座標
+
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);
 	bool BlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
 	bool CheckConnections(const BlockBase* block) const;
 	void BlockProcess(Vector2 pos);
+
+	void HighlightUpdate();
+	void HighlightDraw();
 };

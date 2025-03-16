@@ -47,6 +47,9 @@ void GameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	player_->Updeta();
+
+	HighlightUpdate();
+
 	for (auto block : blocks) {
 		block->Update();
 		CheckConnections(block);
@@ -125,6 +128,8 @@ void GameScene::Draw(void)
 
 	startBlock->Draw();
 	goalBlock->Draw();
+
+	HighlightDraw();
 
 	player_->Draw();
 }
@@ -228,4 +233,15 @@ void GameScene::BlockProcess(Vector2 pos)
 			}
 		}
 	//}
+}
+
+void GameScene::HighlightUpdate()
+{
+	//highlightPos_.x=player_->
+	//highlightPos_.y=player_->
+}
+
+void GameScene::HighlightDraw()
+{
+	DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
 }
