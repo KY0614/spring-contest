@@ -35,9 +35,10 @@ private:
 
 	int img_;
 
-	int bgmHandle_;			//bgm
+	int bgmHandle_;				//bgm
 
-	Vector2 highlightPos_;	//ハイライト座標
+	Vector2 highlightPos_;		//ハイライト座標
+	BlockBase* highlightBlock;	//ハイライトをつけるブロック
 
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);

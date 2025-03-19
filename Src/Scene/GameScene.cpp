@@ -237,11 +237,34 @@ void GameScene::BlockProcess(Vector2 pos)
 
 void GameScene::HighlightUpdate()
 {
-	//highlightPos_.x=player_->
-	//highlightPos_.y=player_->
+	InputManager& ins = InputManager::GetInstance();
+	Vector2 pos = ins.GetMousePos();
+	highlightBlock = nullptr;
+
+	for (auto block : blocks)
+	{
+		int blockX = block->GetX();
+		int blockY = block->GetY();
+
+		if (pos.x >= blockX - gridSize_ / 2 && pos.x <= blockX + gridSize_ / 2 &&
+			pos.y >= blockY - gridSize_ / 2 && pos.y <= blockY + gridSize_ / 2)
+		{
+			highlightBlock = block;
+
+			break;
+		}
+	}
 }
 
 void GameScene::HighlightDraw()
 {
-	DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
+	if (highlightBlock != nullptr)
+	{
+		highlightPos_ = highlightBlock->GetPos();
+		highlightPos_.x -= gridSize_ / 2;
+		highlightPos_.y -= gridSize_ / 2;
+
+		DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
+	}
+	
 }
