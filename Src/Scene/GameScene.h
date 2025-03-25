@@ -35,10 +35,13 @@ private:
 
 	int img_;
 
-	int bgmHandle_;				//bgm
+	int bgmHandle_;					//bgm
+	int seTouch_;					//ブロック触ったとき
+	int seRotate_;					//回転
 
-	Vector2 highlightPos_;		//ハイライト座標
-	BlockBase* highlightBlock;	//ハイライトをつけるブロック
+	Vector2 highlightPos_;			//ハイライト座標
+	BlockBase* highlightBlock;		//ハイライトをつけるブロック
+	BlockBase* preHighlightBlock;	//
 
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);
@@ -48,4 +51,7 @@ private:
 
 	void HighlightUpdate();
 	void HighlightDraw();
+
+	void InitSoundEffect();
+	void PlaySoundEffect();
 };

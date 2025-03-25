@@ -27,11 +27,13 @@ void SelectScene::Init(void)
 	stateFlag_ = false;
 	lockTimer_ = 0;      // ロック時間用変数
 
-	//サウンド読み込み
+	//BGM読み込み
 	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber22.mp3");
 
 	//音量調整
 	ChangeVolumeSoundMem(255 * 30 / 100, bgmHandle_);
+
+	InitSoundEffect();
 
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
@@ -128,6 +130,8 @@ void SelectScene::State(void)
 		//BGM停止
 		StopSoundMem(bgmHandle_);
 
+		PlaySoundMem(seDecision_, DX_PLAYTYPE_BACK);
+
 		if (select_ == SELECT_TYPE::EASY)
 		{
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
@@ -141,4 +145,9 @@ void SelectScene::State(void)
 			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		}
 	}
+}
+
+void SelectScene::InitSoundEffect()
+{
+	seDecision_ = LoadSoundMem("Data/Sound/SE/se_decision.mp3");
 }

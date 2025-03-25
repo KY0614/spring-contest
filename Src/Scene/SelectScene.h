@@ -35,5 +35,8 @@ private:
 	float lockTimer_;      // ƒƒbƒNŠÔ—p•Ï”
 
 	int bgmHandle_;		//BGM
+	int seDecision_;	//Œˆ’è‰¹
+	
+	void InitSoundEffect();
 };
 

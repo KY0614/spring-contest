@@ -38,8 +38,14 @@ void GameScene::Init(void)
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 
+	//SE初期化
+	InitSoundEffect();
+
 	player_ = new Player;
 	player_->Init();
+
+	preHighlightBlock = nullptr;
+	highlightBlock = nullptr;
 }
 
 void GameScene::Update(void)
@@ -49,6 +55,8 @@ void GameScene::Update(void)
 	player_->Updeta();
 
 	HighlightUpdate();
+
+	PlaySoundEffect();
 
 	for (auto block : blocks) {
 		block->Update();
@@ -239,6 +247,8 @@ void GameScene::HighlightUpdate()
 {
 	InputManager& ins = InputManager::GetInstance();
 	Vector2 pos = ins.GetMousePos();
+
+	preHighlightBlock = highlightBlock;
 	highlightBlock = nullptr;
 
 	for (auto block : blocks)
@@ -267,4 +277,18 @@ void GameScene::HighlightDraw()
 		DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
 	}
 	
+}
+
+void GameScene::InitSoundEffect()
+{
+	seTouch_ = LoadSoundMem("Data/Sound/SE/se_touch.mp3");
+	seRotate_ = LoadSoundMem("Data/Sound/SE/se_rotate.mp3");
+}
+
+void GameScene::PlaySoundEffect()
+{
+	if (preHighlightBlock != highlightBlock && highlightBlock != nullptr)
+	{
+		PlaySoundMem(seTouch_, DX_PLAYTYPE_BACK);
+	}
 }

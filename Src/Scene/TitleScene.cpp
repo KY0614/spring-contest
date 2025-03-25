@@ -22,6 +22,8 @@ void TitleScene::Init(void)
 	//サウンド読み込み
 	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber41.mp3");
 
+	InitSoundEffect();
+
 	//音量調整
 	ChangeVolumeSoundMem(255* 30 / 100,bgmHandle_);
 
@@ -48,6 +50,8 @@ void TitleScene::Update(void)
 	{
 		//BGM停止
 		StopSoundMem(bgmHandle_);
+
+ 		PlaySoundMem(seDecision_, DX_PLAYTYPE_BACK);
 
 		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
@@ -91,4 +95,9 @@ void TitleScene::Draw(void)
 		DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("スペースを押して次へ", StrLen)) / 2, Application::SCREEN_SIZE_Y / 2 + 180, "スペースを押して次へ", 0xffffff);
 	}
 	SetFontSize(16);
+}
+
+void TitleScene::InitSoundEffect()
+{
+	seDecision_ = LoadSoundMem("Data/Sound/SE/se_decision.mp3");
 }

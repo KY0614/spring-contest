@@ -19,12 +19,16 @@ public:
 
 private:
 
-	int bgmHandle_;		//BGM
-
+	
 	int img_;//画像
 	int loopCount;						//文字カウント
 	int FontHandle;
 	int StrLen;
 	bool moziFlag;						//文字フラグ
+
+	int bgmHandle_;						//BGM
+	int seDecision_;					//決定音
+
+	void InitSoundEffect();
 
 };
