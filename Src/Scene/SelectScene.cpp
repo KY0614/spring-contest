@@ -133,17 +133,17 @@ void SelectScene::State(void)
 		if (select_ == SELECT_TYPE::EASY)
 		{
 			selectNo = 1;
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::EASY);
 		}
 		if (select_ == SELECT_TYPE::NORMAL)
 		{
 			selectNo = 2;
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::NORMAL);
 		}
 		if (select_ == SELECT_TYPE::HARD)
 		{
 			selectNo = 3;
-			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::HARD);
 		}
 	}
 }

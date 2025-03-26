@@ -21,6 +21,9 @@ public:
 		SELECT,
 		TITLE,
 		GAME,
+		EASY,
+		NORMAL,
+		HARD,
 		GAMECLEAR,
 	};
 	

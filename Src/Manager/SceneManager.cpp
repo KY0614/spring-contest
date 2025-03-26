@@ -5,6 +5,9 @@
 #include "../Scene/TitleScene.h"
 #include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
+#include "../Scene/EasyGameScene.h"
+#include "../Scene/NormalGameScene.h"
+#include "../Scene/HardGameScene.h"
 #include "../Scene/GameClearScene.h"
 #include "ResourceManager.h"
 #include "SceneManager.h"
@@ -211,7 +214,16 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		break;
 	case SCENE_ID::GAME:
 		scene_ = std::make_unique<GameScene>();
-		break;	
+		break;
+	case SCENE_ID::EASY:
+		scene_ = std::make_unique<EasyGameScene>();
+		break;
+	case SCENE_ID::NORMAL:
+		scene_ = std::make_unique<NormalGameScene>();
+		break;
+	case SCENE_ID::HARD:
+		scene_ = std::make_unique<HardGameScene>();
+		break;
 	case SCENE_ID::GAMECLEAR:
 		scene_ = std::make_unique<GameClearScene>();
 		break;

@@ -19,6 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Scene\HardGameScene.cpp" />
+    <ClCompile Include="Src\Scene\NormalGameScene.cpp" />
+    <ClCompile Include="Src\Scene\EasyGameScene.cpp" />
     <ClCompile Include="Src\Scene\GameClearScene.cpp" />
     <ClCompile Include="Src\Scene\SelectScene.cpp" />
     <ClCompile Include="Src\Object\Block\BlockBase.cpp" />
@@ -39,6 +42,9 @@
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Scene\HardGameScene.h" />
+    <ClInclude Include="Src\Scene\NormalGameScene.h" />
+    <ClInclude Include="Src\Scene\EasyGameScene.h" />
     <ClInclude Include="Src\Scene\GameClearScene.h" />
     <ClInclude Include="Src\Scene\SelectScene.h" />
     <ClInclude Include="Src\Object\Block\BlockBase.h" />
