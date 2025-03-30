@@ -37,7 +37,9 @@ private:
 	bool stateFlag_;	 //無効かフラグ
 	float lockTimer_;      // ロック時間用変数
 
-	//サウンド
 	int bgmHandle_;		//BGM
+	int seDecision_;	//決定音
+	
+	void InitSoundEffect();
 };
 

@@ -22,6 +22,8 @@ void TitleScene::Init(void)
 	//ÉTÉEÉìÉhì«Ç›çûÇ›
 	bgmHandle_ = LoadSoundMem("Data/Sound/Bgm/maou_bgm_cyber41.mp3");
 
+	InitSoundEffect();
+
 	//âπó í≤êÆ
 	ChangeVolumeSoundMem(255* 30 / 100,bgmHandle_);
 
@@ -70,6 +72,8 @@ void TitleScene::Update(void)
 	{
 		//BGMí‚é~
 		StopSoundMem(bgmHandle_);
+
+ 		PlaySoundMem(seDecision_, DX_PLAYTYPE_BACK);
 
 		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAME);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::SELECT);
@@ -122,4 +126,9 @@ void TitleScene::Draw(void)
 	SetFontSize(16);
 
 	
+}
+
+void TitleScene::InitSoundEffect()
+{
+	seDecision_ = LoadSoundMem("Data/Sound/SE/se_decision.mp3");
 }

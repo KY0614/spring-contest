@@ -20,9 +20,7 @@ public:
 
 private:
 
-	//サウンド
-	int bgmHandle_;		//BGM
-
+	
 	int img_;//画像
 	int imgr_;
 	int imgBlock_;
@@ -33,5 +31,10 @@ private:
 	int FontHandle;
 	int StrLen;
 	bool moziFlag;						//文字フラグ
+
+	int bgmHandle_;						//BGM
+	int seDecision_;					//決定音
+
+	void InitSoundEffect();
 
 };
