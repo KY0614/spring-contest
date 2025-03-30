@@ -38,8 +38,14 @@ void NormalGameScene::Init(void)
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 
+	//SE初期化
+	InitSoundEffect();
+
 	player_ = new Player;
 	player_->Init();
+
+	preHighlightBlock = nullptr;
+	highlightBlock = nullptr;
 }
 
 void NormalGameScene::Update(void)
@@ -47,6 +53,11 @@ void NormalGameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	player_->Updeta();
+
+	HighlightUpdate();
+
+	PlaySoundEffect();
+
 	for (auto block : blocks) {
 		block->Update();
 		CheckConnections(block);
@@ -125,6 +136,8 @@ void NormalGameScene::Draw(void)
 	DrawString(0, 0, "NORMALgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
+
+	HighlightDraw();
 
 	player_->Draw();
 }
@@ -228,4 +241,54 @@ void NormalGameScene::BlockProcess(Vector2 pos)
 		}
 	}
 	//}
+}
+
+void NormalGameScene::HighlightUpdate()
+{
+	InputManager& ins = InputManager::GetInstance();
+	Vector2 pos = ins.GetMousePos();
+
+	preHighlightBlock = highlightBlock;
+	highlightBlock = nullptr;
+
+	for (auto block : blocks)
+	{
+		int blockX = block->GetX();
+		int blockY = block->GetY();
+
+		if (pos.x >= blockX - gridSize_ / 2 && pos.x <= blockX + gridSize_ / 2 &&
+			pos.y >= blockY - gridSize_ / 2 && pos.y <= blockY + gridSize_ / 2)
+		{
+			highlightBlock = block;
+
+			break;
+		}
+	}
+}
+
+void NormalGameScene::HighlightDraw()
+{
+	if (highlightBlock != nullptr)
+	{
+		highlightPos_ = highlightBlock->GetPos();
+		highlightPos_.x -= gridSize_ / 2;
+		highlightPos_.y -= gridSize_ / 2;
+
+		DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
+	}
+
+}
+
+void NormalGameScene::InitSoundEffect()
+{
+	seTouch_ = LoadSoundMem("Data/Sound/SE/se_touch.mp3");
+	seRotate_ = LoadSoundMem("Data/Sound/SE/se_rotate.mp3");
+}
+
+void NormalGameScene::PlaySoundEffect()
+{
+	if (preHighlightBlock != highlightBlock && highlightBlock != nullptr)
+	{
+		PlaySoundMem(seTouch_, DX_PLAYTYPE_BACK);
+	}
 }

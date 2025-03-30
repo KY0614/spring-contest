@@ -40,6 +40,15 @@ void EasyGameScene::Init(void)
 
 	player_ = new Player;
 	player_->Init();
+
+	//SE‰Šú‰»
+	InitSoundEffect();
+
+	player_ = new Player;
+	player_->Init();
+
+	preHighlightBlock = nullptr;
+	highlightBlock = nullptr;
 }
 
 void EasyGameScene::Update(void)
@@ -47,6 +56,11 @@ void EasyGameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	player_->Updeta();
+
+	HighlightUpdate();
+
+	PlaySoundEffect();
+
 	for (auto block : blocks) {
 		block->Update();
 		CheckConnections(block);
@@ -125,6 +139,8 @@ void EasyGameScene::Draw(void)
 	DrawString(0, 0, "EASYgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
+
+	HighlightDraw();
 
 	player_->Draw();
 }
@@ -228,4 +244,54 @@ void EasyGameScene::BlockProcess(Vector2 pos)
 		}
 	}
 	//}
+}
+
+void EasyGameScene::HighlightUpdate()
+{
+	InputManager& ins = InputManager::GetInstance();
+	Vector2 pos = ins.GetMousePos();
+
+	preHighlightBlock = highlightBlock;
+	highlightBlock = nullptr;
+
+	for (auto block : blocks)
+	{
+		int blockX = block->GetX();
+		int blockY = block->GetY();
+
+		if (pos.x >= blockX - gridSize_ / 2 && pos.x <= blockX + gridSize_ / 2 &&
+			pos.y >= blockY - gridSize_ / 2 && pos.y <= blockY + gridSize_ / 2)
+		{
+			highlightBlock = block;
+
+			break;
+		}
+	}
+}
+
+void EasyGameScene::HighlightDraw()
+{
+	if (highlightBlock != nullptr)
+	{
+		highlightPos_ = highlightBlock->GetPos();
+		highlightPos_.x -= gridSize_ / 2;
+		highlightPos_.y -= gridSize_ / 2;
+
+		DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
+	}
+
+}
+
+void EasyGameScene::InitSoundEffect()
+{
+	seTouch_ = LoadSoundMem("Data/Sound/SE/se_touch.mp3");
+	seRotate_ = LoadSoundMem("Data/Sound/SE/se_rotate.mp3");
+}
+
+void EasyGameScene::PlaySoundEffect()
+{
+	if (preHighlightBlock != highlightBlock && highlightBlock != nullptr)
+	{
+		PlaySoundMem(seTouch_, DX_PLAYTYPE_BACK);
+	}
 }
