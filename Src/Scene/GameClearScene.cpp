@@ -35,4 +35,8 @@ void GameClearScene::Draw(void)
 	SetFontSize(160);
 	DrawString(100, 100, "GAMECLEAR", 0xffffff);
 	SetFontSize(16);
+
+	SetFontSize(80);
+	DrawString(200, 300, "push Space", 0xffffff);
+	SetFontSize(16);
 }

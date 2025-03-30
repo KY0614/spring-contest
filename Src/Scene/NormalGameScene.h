@@ -6,6 +6,7 @@
 
 class Player;
 class BlockBase;
+class Timer;
 
 class NormalGameScene : public SceneBase
 {
@@ -23,6 +24,7 @@ public:
 
 private:
 	Player* player_;
+	Timer* timer_;
 
 	//ƒTƒEƒ“ƒh
 	int bgmHandle_;		//BGM
@@ -49,6 +51,7 @@ private:
 	bool BlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
 	bool CheckConnections(const BlockBase* block) const;
 	void BlockProcess(Vector2 pos);
+	bool AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
 
 	void HighlightUpdate();
 	void HighlightDraw();

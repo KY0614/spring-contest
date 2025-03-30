@@ -14,6 +14,8 @@ public:
     void Update(void);
     void Draw(void);
 
+    int GetTime(void) { return count; }
+
 private:
 
     //int i, a = 0;

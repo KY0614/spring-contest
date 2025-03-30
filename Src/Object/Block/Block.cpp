@@ -8,6 +8,9 @@
 Block::Block(Vector2 pos, int img):BlockBase(pos,img)
 {
 	connections = { {0,0},{1,1} };
+	exits[0] = { -80, 0 }; // ç∂
+	exits[1] = { 0, -80 }; // è„
+	UpdateExits();
 }
 
 void Block::Init(void)

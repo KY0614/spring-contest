@@ -6,6 +6,7 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
+#include "../Object/Time/Timer.h"
 #include "HardGameScene.h"
 
 HardGameScene::HardGameScene(void) :selectBlock(nullptr)
@@ -44,6 +45,9 @@ void HardGameScene::Init(void)
 	player_ = new Player;
 	player_->Init();
 
+	timer_ = new Timer;
+	timer_->Init();
+
 	preHighlightBlock = nullptr;
 	highlightBlock = nullptr;
 }
@@ -53,6 +57,7 @@ void HardGameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	player_->Updeta();
+	timer_->Update();
 
 	HighlightUpdate();
 
@@ -83,6 +88,10 @@ void HardGameScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 
+	if (timer_->GetTime() <= 0)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+	}
 }
 
 void HardGameScene::Draw(void)
@@ -109,6 +118,18 @@ void HardGameScene::Draw(void)
 		startX_ + (160 * 3), startY_ + (160 * 3),
 		0xFF0000, true);
 
+	for (auto block : blocks) {
+		if (CheckConnections(block)) {
+			// 接続されているブロックの下に黄色のボックスを表示
+			int blockX = block->GetX();
+			int blockY = block->GetY();
+			DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
+				blockX + gridSize_ / 2, blockY + gridSize_ / 2,
+				0xFFFF00, true);
+		}
+		//block->Draw();
+	}
+
 	// 選択されているブロックの下に緑のボックスを表示
 	if (selectBlock) {
 		int blockX = selectBlock->GetX();
@@ -119,20 +140,8 @@ void HardGameScene::Draw(void)
 	}
 
 	for (auto block : blocks) {
-		if (CheckConnections(block)) {
-			// 接続されているブロックの下に黄色のボックスを表示
-			int blockX = block->GetX();
-			int blockY = block->GetY();
-			DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-				blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-				0xFFFF00, true);
-		}
 		block->Draw();
 	}
-
-	//for (auto block : blocks) {
-	//	block->Draw();
-	//}
 	DrawString(0, 0, "HARDgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
@@ -140,6 +149,7 @@ void HardGameScene::Draw(void)
 	HighlightDraw();
 
 	player_->Draw();
+	timer_->Draw();
 }
 
 void HardGameScene::InitBlock(void)
@@ -206,9 +216,17 @@ bool HardGameScene::CheckConnections(const BlockBase* block) const
 	//	}
 	//return true;
 
-	 // 指定されたブロックが他のブロックと接続されているかをチェック
+	// // 指定されたブロックが他のブロックと接続されているかをチェック
+	//for (const auto& otherBlock : blocks) {
+	//	if (block != otherBlock && BlocksConnected(block, otherBlock)) {
+	//		return true;
+	//	}
+	//}
+	//return false;
+
+	// 指定されたブロックが他のブロックと接続されているかをチェック
 	for (const auto& otherBlock : blocks) {
-		if (block != otherBlock && BlocksConnected(block, otherBlock)) {
+		if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
 			return true;
 		}
 	}
@@ -241,6 +259,23 @@ void HardGameScene::BlockProcess(Vector2 pos)
 		}
 	}
 	//}
+}
+
+bool HardGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
+{
+	// ブロック1の出口がブロック2の入口と一致するかを判定
+	for (int i = 0; i < 4; ++i) {
+		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
+		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
+		for (int j = 0; j < 4; ++j) {
+			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
+			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
+			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void HardGameScene::HighlightUpdate()

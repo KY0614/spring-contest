@@ -6,6 +6,7 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
+#include "../Object/Time/Timer.h"
 #include "EasyGameScene.h"
 
 EasyGameScene::EasyGameScene(void) :selectBlock(nullptr)
@@ -39,13 +40,13 @@ void EasyGameScene::Init(void)
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 
 	player_ = new Player;
-	player_->Init();
+	player_->Init();	
+	
+	timer_ = new Timer;
+	timer_->Init();
 
 	//SE初期化
 	InitSoundEffect();
-
-	player_ = new Player;
-	player_->Init();
 
 	preHighlightBlock = nullptr;
 	highlightBlock = nullptr;
@@ -56,6 +57,7 @@ void EasyGameScene::Update(void)
 	InputManager& ins = InputManager::GetInstance();
 
 	player_->Updeta();
+	timer_->Update();
 
 	HighlightUpdate();
 
@@ -66,11 +68,13 @@ void EasyGameScene::Update(void)
 		CheckConnections(block);
 	}
 
+	//スペースキー押下で右回転
 	if (selectBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		selectBlock->RightRotate();
 	}
 
+	//左クリックで選択
 	if (ins.IsTrgMouseLeft()) {
 		BlockProcess(ins.GetMousePos());
 	}
@@ -85,7 +89,10 @@ void EasyGameScene::Update(void)
 		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
-
+	if (timer_->GetTime() <= 0)
+	{
+		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
+	}
 }
 
 void EasyGameScene::Draw(void)
@@ -112,14 +119,7 @@ void EasyGameScene::Draw(void)
 		startX_ + (160 * 3), startY_ + (160 * 3),
 		0xFF0000, true);
 
-	// 選択されているブロックの下に緑のボックスを表示
-	if (selectBlock) {
-		int blockX = selectBlock->GetX();
-		int blockY = selectBlock->GetY();
-		DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-			blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-			GetColor(0, 255, 0), true);
-	}
+
 
 	for (auto block : blocks) {
 		if (CheckConnections(block)) {
@@ -130,12 +130,21 @@ void EasyGameScene::Draw(void)
 				blockX + gridSize_ / 2, blockY + gridSize_ / 2,
 				0xFFFF00, true);
 		}
-		block->Draw();
+		//block->Draw();
 	}
 
-	//for (auto block : blocks) {
-	//	block->Draw();
-	//}
+	// 選択されているブロックの下に緑のボックスを表示
+	if (selectBlock) {
+		int blockX = selectBlock->GetX();
+		int blockY = selectBlock->GetY();
+		DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
+			blockX + gridSize_ / 2, blockY + gridSize_ / 2,
+			GetColor(0, 255, 0), true);
+	}
+
+	for (auto block : blocks) {
+		block->Draw();
+	}
 	DrawString(0, 0, "EASYgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
@@ -143,6 +152,7 @@ void EasyGameScene::Draw(void)
 	HighlightDraw();
 
 	player_->Draw();
+	timer_->Draw();
 }
 
 void EasyGameScene::InitBlock(void)
@@ -209,9 +219,17 @@ bool EasyGameScene::CheckConnections(const BlockBase* block) const
 	//	}
 	//return true;
 
-	 // 指定されたブロックが他のブロックと接続されているかをチェック
+	// // 指定されたブロックが他のブロックと接続されているかをチェック
+	//for (const auto& otherBlock : blocks) {
+	//	if (block != otherBlock && BlocksConnected(block, otherBlock)) {
+	//		return true;
+	//	}
+	//}
+	//return false;
+
+	// 指定されたブロックが他のブロックと接続されているかをチェック
 	for (const auto& otherBlock : blocks) {
-		if (block != otherBlock && BlocksConnected(block, otherBlock)) {
+		if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
 			return true;
 		}
 	}
@@ -244,6 +262,23 @@ void EasyGameScene::BlockProcess(Vector2 pos)
 		}
 	}
 	//}
+}
+
+bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
+{
+	// ブロック1の出口がブロック2の入口と一致するかを判定
+	for (int i = 0; i < 4; ++i) {
+		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
+		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
+		for (int j = 0; j < 4; ++j) {
+			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
+			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
+			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 void EasyGameScene::HighlightUpdate()

@@ -8,12 +8,8 @@ class BlockBase
 public:
 	static constexpr int IMAGE_SCALSE = 320;
 
-	enum class CONECTION
-	{
-		TOP,
-		RIGHT,
-		DOWN,
-		LEFT
+	struct Exit {
+		int x, y;
 	};
 
 	BlockBase(Vector2 startPos,int img);
@@ -41,6 +37,7 @@ public:
 
 	virtual void SetParam(void) = 0;
 	void SnapToGrid(int gridSize, int startX, int startY); // グリッドにスナップする関数
+	const Exit* GetExits() const;
 protected:
 
 	int img_;		//画像
@@ -48,8 +45,12 @@ protected:
 	int rotate_;	//角度
 	Vector2 pos_;	//座標(int型)
 	std::vector<std::pair<int, int>> connections; // 接続可能な方向
+	Exit exits[4]; // 出口の座標の配列
 
 	void UpdateConnections(void); // 接続方向を更新する
+
+	void UpdateExits(); // 出口の座標を更新する
+
 private:
 
 };
