@@ -44,5 +44,7 @@ void Timer::Draw(void)
 {
 
 
-    DrawFormatString(900, 20, White, "Žc‚èŽžŠÔ%ds", count);
+    DrawString(350, 20, "Žc‚èŽžŠÔ", 0xffffff);
+    SetFontSize(40);
+    DrawFormatString(550, 25, White, "%ds", count);
 }
