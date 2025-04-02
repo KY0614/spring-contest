@@ -68,9 +68,20 @@ void NormalGameScene::Update(void)
 		CheckConnections(block);
 	}
 
-	if (selectBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
+	//スペースキー押下で右回転
+	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		selectBlock->RightRotate();
+		highlightBlock->RightRotate();
+	}
+
+	if (highlightBlock && ins.IsTrgMouseLeft())
+	{
+		highlightBlock->LeftRotate();
+	}
+
+	if (highlightBlock && ins.IsTrgMouseRight())
+	{
+		highlightBlock->RightRotate();
 	}
 
 	if (ins.IsTrgMouseLeft()) {
@@ -114,7 +125,7 @@ void NormalGameScene::Draw(void)
 		0xFFFF00, true);
 
 	DrawBox(startX_, startY_,
-		startX_ + (160 * 3), startY_ + (160 * 3),
+		startX_ + (160 * 4), startY_ + (160 * 4),
 		0xFF0000, true);
 
 	for (auto block : blocks) {
@@ -156,11 +167,11 @@ void NormalGameScene::InitBlock(void)
 	gridSize_ = 160; // 1ブロックのサイズ
 
 	// ブロックの初期位置を計算（画面中央に配置）
-	startX_ = (Application::SCREEN_SIZE_X - (3 * gridSize_)) / 2;
-	startY_ = (Application::SCREEN_SIZE_Y - (3 * gridSize_)) / 2;
+	startX_ = (Application::SCREEN_SIZE_X - (4 * gridSize_)) / 2;
+	startY_ = (Application::SCREEN_SIZE_Y - (4 * gridSize_)) / 2;
 
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
 			int x = startX_ + j * gridSize_ + gridSize_ / 2; // 中心に配置
 			int y = startY_ + i * gridSize_ + gridSize_ / 2; // 中心に配置
 			Vector2 pos = { x,y };
@@ -171,7 +182,7 @@ void NormalGameScene::InitBlock(void)
 	}
 
 	Vector2 startPos = { startX_ - gridSize_ / 2,startY_ + gridSize_ / 2 };
-	Vector2 gaolPos = { startX_ + (gridSize_ * 3) + 80, startY_ + (gridSize_ * 2) - 80 };
+	Vector2 gaolPos = { startX_ + (gridSize_ * 4) + 80, startY_ + (gridSize_ * 2) - 80 };
 	startBlock = new Block(startPos, LoadGraph("Data/Image/StartBlock.png"));
 	startBlock->SetRot(0);
 	goalBlock = new Block(gaolPos, LoadGraph("Data/Image/GoolBlock.png"));

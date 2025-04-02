@@ -68,9 +68,20 @@ void HardGameScene::Update(void)
 		CheckConnections(block);
 	}
 
-	if (selectBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
+	//スペースキー押下で右回転
+	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		selectBlock->RightRotate();
+		highlightBlock->RightRotate();
+	}
+
+	if (highlightBlock && ins.IsTrgMouseLeft())
+	{
+		highlightBlock->LeftRotate();
+	}
+
+	if (highlightBlock && ins.IsTrgMouseRight())
+	{
+		highlightBlock->RightRotate();
 	}
 
 	if (ins.IsTrgMouseLeft()) {

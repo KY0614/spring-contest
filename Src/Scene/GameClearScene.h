@@ -1,6 +1,8 @@
 //#pragma once
 #include "SceneBase.h"
 
+class Timer;
+
 class GameClearScene : public SceneBase
 {
 public:

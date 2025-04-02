@@ -36,7 +36,19 @@ void GameClearScene::Draw(void)
 	DrawString(100, 100, "GAMECLEAR", 0xffffff);
 	SetFontSize(16);
 
-	SetFontSize(80);
-	DrawString(200, 300, "push Space", 0xffffff);
+	SetFontSize(40);
+	DrawString(250, 250, "push Space", 0xffffff);
 	SetFontSize(16);
+
+	SetFontSize(25);
+	DrawString(50, 300, "<タイムスコア>", 0xffffff);
+	SetFontSize(16);
+
+	SetFontSize(30);
+	DrawString(190, 350, "1st　:", 0xffffff);
+	DrawString(190, 400, "2nd　:", 0xffffff);
+	DrawString(190, 450, "3rd　:", 0xffffff);
+	DrawString(190, 500, "4th　:", 0xffffff);
+	DrawString(190, 550, "5th　:", 0xffffff);
+
 }

@@ -1,5 +1,6 @@
 #include "DxLib.h"
-
+#include "../../Manager/SceneManager.h"
+#include "../../Manager/InputManager.h"
 #include"Timer.h"
 
 
@@ -16,14 +17,14 @@ void Timer::Init(void)
     //•¶š‚ÌF‚Ìæ“¾
     White = GetColor(255, 255, 255);
     countTime = 0;
-    count = 30;
-
-
-
+    //§ŒÀŠÔİ’è
+    count = 40;
 }
 
 void Timer::Update(void)
 {
+    InputManager& ins = InputManager::GetInstance();
+
     countTime += 1;
 
     if (countTime == 120)

@@ -69,9 +69,19 @@ void EasyGameScene::Update(void)
 	}
 
 	//スペースキー押下で右回転
-	if (selectBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
+	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
-		selectBlock->RightRotate();
+		highlightBlock->RightRotate();
+	}	
+	
+	if (highlightBlock && ins.IsTrgMouseLeft())
+	{
+		highlightBlock->LeftRotate();
+	}	
+	
+	if (highlightBlock && ins.IsTrgMouseRight())
+	{
+		highlightBlock->RightRotate();
 	}
 
 	//左クリックで選択

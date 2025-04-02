@@ -12,6 +12,8 @@ class EasyGameScene : public SceneBase
 {
 public:
 
+	static constexpr int BLOCK_NUM = 3;
+
 	// コンストラクタ
 	EasyGameScene(void);
 

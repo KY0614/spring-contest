@@ -79,8 +79,7 @@ void BlockBase::RightRotate(void)
 
 void BlockBase::LeftRotate(void)
 {
-	rotate_ -= 90;
-	if (rotate_ < 0) { rotate_ = 0; }
+	rotate_ = (rotate_ - 90) % 360;
 
 	UpdateConnections();
 	UpdateExits();
