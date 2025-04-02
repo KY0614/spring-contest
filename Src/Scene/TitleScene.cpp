@@ -131,4 +131,6 @@ void TitleScene::Draw(void)
 void TitleScene::InitSoundEffect()
 {
 	seDecision_ = LoadSoundMem("Data/Sound/SE/se_decision.mp3");
+	//Й╣Ч╩Т▓Ро
+	ChangeVolumeSoundMem(255 * 30 / 100, seDecision_);
 }
