@@ -37,7 +37,10 @@ public:
 
 	virtual void SetParam(void) = 0;
 	void SnapToGrid(int gridSize, int startX, int startY); // グリッドにスナップする関数
+	
 	const Exit* GetExits() const;
+	bool HasElectricity() const;
+	void SetElectricity(bool state);
 
 protected:
 
@@ -46,7 +49,8 @@ protected:
 	int rotate_;	//角度
 	Vector2 pos_;	//座標(int型)
 	std::vector<std::pair<int, int>> connections; // 接続可能な方向
-	Exit exits[4]; // 出口の座標の配列
+	Exit exits[2];			// 出口の座標の配列
+	bool hasElectricity;	// 電気が通っているかどうか
 
 	void UpdateConnections(void); // 接続方向を更新する
 

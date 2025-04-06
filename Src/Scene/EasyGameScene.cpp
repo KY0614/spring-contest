@@ -19,6 +19,7 @@ EasyGameScene::~EasyGameScene(void)
 	for (auto block : blocks) {
 		delete block;
 	}
+	blocks.clear();
 }
 
 void EasyGameScene::Init(void)
@@ -65,7 +66,7 @@ void EasyGameScene::Update(void)
 
 	for (auto block : blocks) {
 		block->Update();
-		CheckConnections(block);
+		//CheckConnections(block);
 	}
 
 	//スペースキー押下で右回転
@@ -73,20 +74,9 @@ void EasyGameScene::Update(void)
 	{
 		highlightBlock->RightRotate();
 	}	
-	
-	if (highlightBlock && ins.IsTrgMouseLeft())
-	{
-		highlightBlock->LeftRotate();
-	}	
-	
-	if (highlightBlock && ins.IsTrgMouseRight())
-	{
-		highlightBlock->RightRotate();
-	}
 
-	//左クリックで選択
-
-	BlockProcess(ins.GetMousePos(),ins.GetMouse());
+	//クリックで回転
+	BlockProcess(ins.GetMousePos());
 
 
 	// シーン遷移
@@ -131,17 +121,17 @@ void EasyGameScene::Draw(void)
 
 
 
-	for (auto block : blocks) {
-		if (CheckConnections(block)) {
-			// 接続されているブロックの下に黄色のボックスを表示
-			int blockX = block->GetX();
-			int blockY = block->GetY();
-			DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-				blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-				0xFFFF00, true);
-		}
-		//block->Draw();
-	}
+	//for (auto block : blocks) {
+	//	if (CheckConnections(block)) {
+	//		// 接続されているブロックの下に黄色のボックスを表示
+	//		int blockX = block->GetX();
+	//		int blockY = block->GetY();
+	//		DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
+	//			blockX + gridSize_ / 2, blockY + gridSize_ / 2,
+	//			0xFFFF00, true);
+	//	}
+	//	//block->Draw();
+	//}
 
 	// 選択されているブロックの下に緑のボックスを表示
 	if (selectBlock) {
@@ -190,6 +180,12 @@ void EasyGameScene::InitBlock(void)
 	startBlock->SetRot(0);
 	goalBlock = new Block(gaolPos, LoadGraph("Data/Image/GoolBlock.png"));
 	goalBlock->SetRot(180);
+
+	// スタート地点のブロックに電気が通っている状態を設定
+	if (!blocks.empty()) {
+		blocks[0]->SetElectricity(true);
+		UpdateElectricity(blocks[0]);
+	}
 }
 
 void EasyGameScene::AddBlock(BlockBase* block)
@@ -197,24 +193,24 @@ void EasyGameScene::AddBlock(BlockBase* block)
 	blocks.push_back(block);
 }
 
-bool EasyGameScene::BlocksConnected(const BlockBase* block1, const BlockBase* block2) const
-{
-	// ブロック1の接続方向がブロック2の位置に一致するかを判定
-	for (const auto& conn1 : block1->GetConnections()) {
-		int connX = block1->GetX() + conn1.first;
-		int connY = block1->GetY() + conn1.second;
-		if (connX == block2->GetX() && connY == block2->GetY()) {
-			for (const auto& conn2 : block2->GetConnections()) {
-				int revConnX = block2->GetX() + conn2.first;
-				int revConnY = block2->GetY() + conn2.second;
-				if (revConnX == block1->GetX() && revConnY == block1->GetY()) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
+//bool EasyGameScene::BlocksConnected(const BlockBase* block1, const BlockBase* block2) const
+//{
+//	// ブロック1の接続方向がブロック2の位置に一致するかを判定
+//	for (const auto& conn1 : block1->GetConnections()) {
+//		int connX = block1->GetX() + conn1.first;
+//		int connY = block1->GetY() + conn1.second;
+//		if (connX == block2->GetX() && connY == block2->GetY()) {
+//			for (const auto& conn2 : block2->GetConnections()) {
+//				int revConnX = block2->GetX() + conn2.first;
+//				int revConnY = block2->GetY() + conn2.second;
+//				if (revConnX == block1->GetX() && revConnY == block1->GetY()) {
+//					return true;
+//				}
+//			}
+//		}
+//	}
+//	return false;
+//}
 
 bool EasyGameScene::CheckConnections(const BlockBase* block) const
 {
@@ -246,9 +242,9 @@ bool EasyGameScene::CheckConnections(const BlockBase* block) const
 	return false;
 }
 
-void EasyGameScene::BlockProcess(Vector2 pos, int button)
+void EasyGameScene::BlockProcess(Vector2 pos)
 {
-	//InputManager& ins = InputManager::GetInstance();
+	InputManager& ins = InputManager::GetInstance();
 	//selectBlock = nullptr;
 	////if (selectBlock) {
 	////	// ブロックを置く際にグリッドにスナップ
@@ -275,23 +271,25 @@ void EasyGameScene::BlockProcess(Vector2 pos, int button)
 
 	BlockBase* block = GetBlockAtPosition(pos.x, pos.y);
 	if (block) {
-		if (button == MOUSE_INPUT_LEFT) {
+		if (ins.IsTrgMouseLeft()) {
 			block->LeftRotate(); // 左クリックで左回転
 		}
-		else if (button == MOUSE_INPUT_RIGHT) {
+		else if (ins.IsTrgMouseRight()) {
 			block->RightRotate(); // 右クリックで右回転（右回転のロジックを追加する必要があります）
 		}
-		//UpdateElectricity(blocks[0]); // スタート地点から再度電気の流れを更新
+		ClearElectricity();
+		blocks[0]->SetElectricity(true);
+		UpdateElectricity(blocks[0]); // スタート地点から再度電気の流れを更新
 	}
 }
 
 bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
 {
 	// ブロック1の出口がブロック2の入口と一致するかを判定
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < 2; ++i) {
 		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
 		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
-		for (int j = 0; j < 4; ++j) {
+		for (int j = 0; j < 2; ++j) {
 			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
 			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
 			if (exitX1 == exitX2 && exitY1 == exitY2) {
@@ -316,6 +314,23 @@ BlockBase* EasyGameScene::GetBlockAtPosition(int x, int y) const
 		}
 	}
 	return nullptr;
+}
+
+void EasyGameScene::UpdateElectricity(BlockBase* block)
+{
+	block->SetElectricity(true);
+	for (auto otherBlock : blocks) {
+		if (block != otherBlock && AreBlocksConnected(block, otherBlock) && !otherBlock->HasElectricity()) {
+			UpdateElectricity(otherBlock); // 再帰的に電気が通るブロックを更新
+		}
+	}
+}
+
+void EasyGameScene::ClearElectricity()
+{
+	for (auto block : blocks) {
+		block->SetElectricity(false);
+	}
 }
 
 void EasyGameScene::HighlightUpdate()

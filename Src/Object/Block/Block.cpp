@@ -41,5 +41,5 @@ void Block::SetParam(void)
 	rotate_ = 0;
 	isHold_ = false;
 	pos_ = { 0,0 };
-	UpdateConnections();
+	//UpdateConnections();
 }

@@ -14,10 +14,10 @@ BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),isHold_
 	int halfSize = 320 / 2 * 0.5;
 	exits[0] = { 0, 0 };  // 右
 	exits[1] = { 0, 0 };  // 下
-	exits[2] = { 0, 0 }; // 左
-	exits[3] = { 0, 0 }; // 上
+	
 	UpdateExits();
 }
+
 
 void BlockBase::Init(void)
 {
@@ -41,6 +41,14 @@ void BlockBase::Update(void)
 
 void BlockBase::Draw(void)
 {
+	// ブロックを描画
+	if (hasElectricity) {
+		// 電気が通っている場合の表示
+		//DrawBox(pos_.x - 40, pos_.y - 40, pos_.x + 40, pos_.y + 40, GetColor(0, 255, 0), TRUE);
+		DrawBox(pos_.x - 80, pos_.y - 80,
+			pos_.x + 80, pos_.y + 80,
+			0x55FF00, true);
+	}
 	DrawRotaGraph(pos_.x, pos_.y,
 		0.5f, rotate_ * DX_PI_F / 180, img_, true, false);
 }
@@ -99,6 +107,16 @@ void BlockBase::SnapToGrid(int gridSize, int startX, int startY)
 const BlockBase::Exit* BlockBase::GetExits() const
 {
 	return exits;
+}
+
+bool BlockBase::HasElectricity() const
+{
+	return hasElectricity;
+}
+
+void BlockBase::SetElectricity(bool state)
+{
+	hasElectricity = state;
 }
 
 void BlockBase::UpdateConnections(void)
