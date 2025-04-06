@@ -57,6 +57,9 @@ private:
 	BlockBase* GetBlockAtPosition(int x, int y) const; // マウス位置にあるブロックを取得する
 	void UpdateElectricity(BlockBase* block);
 	void ClearElectricity();
+	void PropagateElectricity(BlockBase* block); // 電気を伝播させる
+	void StartElectricity(); // スタート地点から電気を通す
+	bool IsConnectedToGoal(void) const; // ゴール地点に接続されたかをチェック
 
 	void HighlightUpdate();
 	void HighlightDraw();

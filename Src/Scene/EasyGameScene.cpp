@@ -9,7 +9,7 @@
 #include "../Object/Time/Timer.h"
 #include "EasyGameScene.h"
 
-EasyGameScene::EasyGameScene(void) :selectBlock(nullptr)
+EasyGameScene::EasyGameScene(void)
 {
 	InitBlock();
 }
@@ -20,6 +20,7 @@ EasyGameScene::~EasyGameScene(void)
 		delete block;
 	}
 	blocks.clear();
+	delete goalBlock;
 }
 
 void EasyGameScene::Init(void)
@@ -78,9 +79,12 @@ void EasyGameScene::Update(void)
 	//クリックで回転
 	BlockProcess(ins.GetMousePos());
 
+	ClearElectricity();
+	startBlock->SetElectricity(true);
+	UpdateElectricity(startBlock); // スタート地点から再度電気の流れを更新
 
 	// シーン遷移
-	if (ins.IsTrgDown(KEY_INPUT_R))
+	if (IsConnectedToGoal())
 	{
 
 		//BGM停止
@@ -106,14 +110,14 @@ void EasyGameScene::Draw(void)
 		1.0f, 0.0f, img_, true, false);
 
 	//スタート地点
-	DrawBox(startX_ - gridSize_, startY_ + gridSize_,
-		startX_, startY_,
-		0xFFFF00, true);
+	//DrawBox(startX_ - gridSize_, startY_ + gridSize_,
+	//	startX_, startY_,
+	//	0xFFFF00, true);
 
 	//ゴール地点
-	DrawBox(startX_ + (gridSize_ * 3), startY_ + (gridSize_),
-		startX_ + (gridSize_ * 4), startY_ + (gridSize_ * 2),
-		0xFFFF00, true);
+	//DrawBox(startX_ + (gridSize_ * 3), startY_ + (gridSize_),
+	//	startX_ + (gridSize_ * 4), startY_ + (gridSize_ * 2),
+	//	0xFFFF00, true);
 
 	DrawBox(startX_, startY_,
 		startX_ + (160 * 3), startY_ + (160 * 3),
@@ -182,10 +186,8 @@ void EasyGameScene::InitBlock(void)
 	goalBlock->SetRot(180);
 
 	// スタート地点のブロックに電気が通っている状態を設定
-	if (!blocks.empty()) {
-		blocks[0]->SetElectricity(true);
-		UpdateElectricity(blocks[0]);
-	}
+	//startBlock->SetElectricity(true);
+	//UpdateElectricity(startBlock);
 }
 
 void EasyGameScene::AddBlock(BlockBase* block)
@@ -277,22 +279,23 @@ void EasyGameScene::BlockProcess(Vector2 pos)
 		else if (ins.IsTrgMouseRight()) {
 			block->RightRotate(); // 右クリックで右回転（右回転のロジックを追加する必要があります）
 		}
-		ClearElectricity();
-		blocks[0]->SetElectricity(true);
-		UpdateElectricity(blocks[0]); // スタート地点から再度電気の流れを更新
 	}
 }
 
 bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
 {
 	// ブロック1の出口がブロック2の入口と一致するかを判定
-	for (int i = 0; i < 2; ++i) {
+	for (int i = 0; i < 2; ++i) 
+	{
 		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
 		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
-		for (int j = 0; j < 2; ++j) {
+
+		for (int j = 0; j < 2; ++j) 
+		{
 			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
 			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
 			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				// 向きを確認するために、出口の座標の差分を計算
 				return true;
 			}
 		}
@@ -331,6 +334,49 @@ void EasyGameScene::ClearElectricity()
 	for (auto block : blocks) {
 		block->SetElectricity(false);
 	}
+}
+
+void EasyGameScene::PropagateElectricity(BlockBase* block)
+{
+	if (!block->HasElectricity()) {
+		block->SetElectricity(true);
+		for (auto otherBlock : blocks) {
+			if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
+				PropagateElectricity(otherBlock);
+			}
+		}
+	}
+}
+
+//void EasyGameScene::StartElectricity()
+//{
+//	// スタート地点のブロックに電気を通す
+//	if (!blocks.empty()) {
+//		startBlock->SetElectricity(true); // 仮に最初のブロックをスタート地点として設定
+//		PropagateElectricity(startBlock);
+//	}
+//}
+
+bool EasyGameScene::IsConnectedToGoal(void) const
+{
+	// ブロック1の出口がブロック2の入口と一致するかを判定
+	for (int i = 0; i < 2; ++i)
+	{
+		int exitX1 = blocks[5]->GetX() + blocks[5]->GetExits()[i].x;
+		int exitY1 = blocks[5]->GetY() + blocks[5]->GetExits()[i].y;
+
+		for (int j = 0; j < 2; ++j)
+		{
+			int exitX2 = goalBlock->GetX() + goalBlock->GetGoalExits()[j].x;
+			int exitY2 = goalBlock->GetY() + goalBlock->GetGoalExits()[j].y;
+			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				// 向きを確認するために、出口の座標の差分を計算
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void EasyGameScene::HighlightUpdate()

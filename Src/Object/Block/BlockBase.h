@@ -39,8 +39,11 @@ public:
 	void SnapToGrid(int gridSize, int startX, int startY); // グリッドにスナップする関数
 	
 	const Exit* GetExits() const;
+	const Exit* GetGoalExits() const { return goalExits; }
 	bool HasElectricity() const;
 	void SetElectricity(bool state);
+
+	bool IsConnected(const BlockBase* otherBlock) const;
 
 protected:
 
@@ -50,9 +53,11 @@ protected:
 	Vector2 pos_;	//座標(int型)
 	std::vector<std::pair<int, int>> connections; // 接続可能な方向
 	Exit exits[2];			// 出口の座標の配列
+	Exit goalExits[1];		// 出口
+	Exit startExits[1];		// 起点
 	bool hasElectricity;	// 電気が通っているかどうか
 
-	void UpdateConnections(void); // 接続方向を更新する
+	//void UpdateConnections(void); // 接続方向を更新する
 
 	void UpdateExits(); // 出口の座標を更新する
 

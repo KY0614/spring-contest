@@ -8,12 +8,14 @@ BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),isHold_
 	// ランダムに初期角度を設定
 	int randomAngle = GetRand(3) * 90; // 0, 1, 2, 3 のいずれかを生成し、×90度にする
 	rotate_ = randomAngle;
-	UpdateConnections();
+	//UpdateConnections();
 
 	// 初期出口の座標を設定
 	int halfSize = 320 / 2 * 0.5;
 	exits[0] = { 0, 0 };  // 右
 	exits[1] = { 0, 0 };  // 下
+	goalExits[0] = { -halfSize, 0 };
+	startExits[0] = { halfSize, 0 };
 	
 	UpdateExits();
 }
@@ -47,7 +49,12 @@ void BlockBase::Draw(void)
 		//DrawBox(pos_.x - 40, pos_.y - 40, pos_.x + 40, pos_.y + 40, GetColor(0, 255, 0), TRUE);
 		DrawBox(pos_.x - 80, pos_.y - 80,
 			pos_.x + 80, pos_.y + 80,
-			0x55FF00, true);
+			0xFFFF00, true);
+	}
+	else {
+		DrawBox(pos_.x - 80, pos_.y - 80,
+			pos_.x + 80, pos_.y + 80,
+			0xFF0000, true);
 	}
 	DrawRotaGraph(pos_.x, pos_.y,
 		0.5f, rotate_ * DX_PI_F / 180, img_, true, false);
@@ -119,43 +126,56 @@ void BlockBase::SetElectricity(bool state)
 	hasElectricity = state;
 }
 
-void BlockBase::UpdateConnections(void)
+bool BlockBase::IsConnected(const BlockBase* otherBlock) const
 {
-	// 90度回転ごとに接続方向を更新
-	for (auto& conect : connections) {
-		int dx = conect.first;
-		int dy = conect.second;
-		conect.first = -dy;
-		conect.second = dx;
+	for (int i = 0; i < 2; ++i) {
+		int exitX1 = pos_.x + exits[i].x;
+		int exitY1 = pos_.y + exits[i].y;
+		for (int j = 0; j < 2; ++j) {
+			int exitX2 = otherBlock->GetX() + otherBlock->GetExits()[j].x;
+			int exitY2 = otherBlock->GetY() + otherBlock->GetExits()[j].y;
+			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				return true;
+			}
+		}
 	}
+	return false;
 }
+
+//void BlockBase::UpdateConnections(void)
+//{
+//	// 90度回転ごとに接続方向を更新
+//	for (auto& conect : connections) {
+//		int dx = conect.first;
+//		int dy = conect.second;
+//		conect.first = -dy;
+//		conect.second = dx;
+//	}
+//}
 
 void BlockBase::UpdateExits()
 {
-	//for (int i = 0; i < 4; ++i) {
-	//	int dx = exits[i].x;
-	//	int dy = exits[i].y;
-	//	exits[i].x = -dy;
-	//	exits[i].y = dx;
-	//}
-
 	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
 	switch (rotate_) {
 	case 0:
 		exits[0] = { -halfSize, 0 };  // 左
 		exits[1] = { 0, -halfSize };  // 上
+		goalExits[0] = { halfSize, 0 };  // ゴール用の出口を右に設定
 		break;
 	case 90:
 		exits[0] = { 0, -halfSize };  // 上
 		exits[1] = { halfSize, 0 };   // 右
+		goalExits[0] = { halfSize, 0 };  // ゴール用の出口を右に設定
 		break;
 	case 180:
 		exits[0] = { halfSize, 0 };   // 右
 		exits[1] = { 0, halfSize };   // 下
+		goalExits[0] = { -halfSize, 0 };  // ゴール用の出口を左に設定
 		break;
 	case 270:
 		exits[0] = { 0, halfSize };   // 下
 		exits[1] = { -halfSize, 0 };  // 左
+		goalExits[0] = { 0, -halfSize };  // ゴール用の出口を上に設定
 		break;
 	}
 }
