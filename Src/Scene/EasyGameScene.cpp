@@ -85,9 +85,9 @@ void EasyGameScene::Update(void)
 	}
 
 	//左クリックで選択
-	if (ins.IsTrgMouseLeft()) {
-		BlockProcess(ins.GetMousePos());
-	}
+
+	BlockProcess(ins.GetMousePos(),ins.GetMouse());
+
 
 	// シーン遷移
 	if (ins.IsTrgDown(KEY_INPUT_R))
@@ -246,32 +246,43 @@ bool EasyGameScene::CheckConnections(const BlockBase* block) const
 	return false;
 }
 
-void EasyGameScene::BlockProcess(Vector2 pos)
+void EasyGameScene::BlockProcess(Vector2 pos, int button)
 {
-	InputManager& ins = InputManager::GetInstance();
-	selectBlock = nullptr;
-	//if (selectBlock) {
-	//	// ブロックを置く際にグリッドにスナップ
-	//	selectBlock->SnapToGrid(gridSize_, startX_, startY_);
-	//	selectBlock->IsNotHold();
-	//	selectBlock = nullptr;
+	//InputManager& ins = InputManager::GetInstance();
+	//selectBlock = nullptr;
+	////if (selectBlock) {
+	////	// ブロックを置く際にグリッドにスナップ
+	////	selectBlock->SnapToGrid(gridSize_, startX_, startY_);
+	////	selectBlock->IsNotHold();
+	////	selectBlock = nullptr;
+	////}
+	////else {
+	//for (auto block : blocks) {
+	//	int blockX = block->GetX();
+	//	int blockY = block->GetY();
+	//	int blockSize = gridSize_;
+
+	//	if (pos.x >= blockX - blockSize / 2 && pos.x <= blockX + blockSize / 2 &&
+	//		pos.y >= blockY - blockSize / 2 && pos.y <= blockY + blockSize / 2) {
+
+	//		selectBlock = block;
+	//		//block->IsHold();
+	//		break;
+
+	//	}
 	//}
-	//else {
-	for (auto block : blocks) {
-		int blockX = block->GetX();
-		int blockY = block->GetY();
-		int blockSize = gridSize_;
+	////}
 
-		if (pos.x >= blockX - blockSize / 2 && pos.x <= blockX + blockSize / 2 &&
-			pos.y >= blockY - blockSize / 2 && pos.y <= blockY + blockSize / 2) {
-
-			selectBlock = block;
-			//block->IsHold();
-			break;
-
+	BlockBase* block = GetBlockAtPosition(pos.x, pos.y);
+	if (block) {
+		if (button == MOUSE_INPUT_LEFT) {
+			block->LeftRotate(); // 左クリックで左回転
 		}
+		else if (button == MOUSE_INPUT_RIGHT) {
+			block->RightRotate(); // 右クリックで右回転（右回転のロジックを追加する必要があります）
+		}
+		//UpdateElectricity(blocks[0]); // スタート地点から再度電気の流れを更新
 	}
-	//}
 }
 
 bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
@@ -289,6 +300,22 @@ bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase*
 		}
 	}
 	return false;
+}
+
+BlockBase* EasyGameScene::GetBlockAtPosition(int x, int y) const
+{
+	for (auto block : blocks) {
+		int blockX = block->GetX();
+		int blockY = block->GetY();
+		int blockSize = gridSize_; // ブロックのサイズ（ピクセル単位）
+
+		// x, y がブロックの範囲内にあるか判定する条件
+		if (x >= blockX - blockSize / 2 && x <= blockX + blockSize / 2 &&
+			y >= blockY - blockSize / 2 && y <= blockY + blockSize / 2) {
+			return block;
+		}
+	}
+	return nullptr;
 }
 
 void EasyGameScene::HighlightUpdate()

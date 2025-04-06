@@ -52,8 +52,9 @@ private:
 	void AddBlock(BlockBase* block);
 	bool BlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
 	bool CheckConnections(const BlockBase* block) const;
-	void BlockProcess(Vector2 pos);
+	void BlockProcess(Vector2 pos,int button);
 	bool AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
+	BlockBase* GetBlockAtPosition(int x, int y) const; // マウス位置にあるブロックを取得する
 
 	void HighlightUpdate();
 	void HighlightDraw();

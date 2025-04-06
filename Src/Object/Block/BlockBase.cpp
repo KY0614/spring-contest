@@ -72,16 +72,16 @@ void BlockBase::IsNotHold(void)
 
 void BlockBase::RightRotate(void)
 {
-	rotate_ = (rotate_ + 90) % 360;
-	UpdateConnections();
+	rotate_ = (rotate_ + 90+ 360) % 360;
+	//UpdateConnections();
 	UpdateExits();
 }
 
 void BlockBase::LeftRotate(void)
 {
-	rotate_ = (rotate_ - 90) % 360;
+	rotate_ = (rotate_ - 90 + 360) % 360;
 
-	UpdateConnections();
+	//UpdateConnections();
 	UpdateExits();
 }
 

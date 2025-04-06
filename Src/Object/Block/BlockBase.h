@@ -38,6 +38,7 @@ public:
 	virtual void SetParam(void) = 0;
 	void SnapToGrid(int gridSize, int startX, int startY); // グリッドにスナップする関数
 	const Exit* GetExits() const;
+
 protected:
 
 	int img_;		//画像
