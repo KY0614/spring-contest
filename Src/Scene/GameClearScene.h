@@ -19,5 +19,8 @@ public:
 
 private:
 	int img_;
+	int cat1Img_;
+	int cat2Img_;
+	int catImg_;
 };
 

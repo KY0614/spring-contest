@@ -47,6 +47,9 @@ private:
 	BlockBase* highlightBlock;		//ハイライトをつけるブロック
 	BlockBase* preHighlightBlock;	//
 
+	BlockBase* UIBlock1;
+	int replaceCount;
+
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);
 
@@ -56,6 +59,7 @@ private:
 	void UpdateElectricity(BlockBase* block);
 	void ClearElectricity();	//電気の状態を全部リセット
 	void PropagateElectricity(BlockBase* block); // 電気を伝播させる
+	void ReplaceBlockWithPlusBlock();
 
 	void HighlightUpdate();
 	void HighlightDraw();

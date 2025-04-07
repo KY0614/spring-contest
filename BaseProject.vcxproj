@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Block\PreventBlock.cpp" />
     <ClCompile Include="Src\Object\Block\PlusBlock.cpp" />
     <ClCompile Include="Src\Scene\HardGameScene.cpp" />
     <ClCompile Include="Src\Scene\NormalGameScene.cpp" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Src\Object\Block\StraightBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Block\PreventBlock.h" />
     <ClInclude Include="Src\Object\Block\PlusBlock.h" />
     <ClInclude Include="Src\Scene\HardGameScene.h" />
     <ClInclude Include="Src\Scene\NormalGameScene.h" />

@@ -24,6 +24,7 @@ EasyGameScene::~EasyGameScene(void)
 	}
 	blocks.clear();
 	delete goalBlock;
+	DeleteSoundMem(bgmHandle_);
 }
 
 void EasyGameScene::Init(void)
@@ -116,8 +117,6 @@ void EasyGameScene::Draw(void)
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
-
-
 
 	for (auto block : blocks) {
 		block->Draw();
