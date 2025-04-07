@@ -7,6 +7,8 @@
 #include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
 #include "../Object/Block/PlusBlock.h"
+#include "../Object/Block/ToBlock.h"
+#include "../Object/Block/StraightBlock.h"
 #include "../Object/Time/Timer.h"
 #include "EasyGameScene.h"
 
@@ -74,8 +76,7 @@ void EasyGameScene::Update(void)
 		block->Update();
 		startBlock->SetElectricity(true);
 		UpdateElectricity(startBlock); // スタート地点から再度電気の流れを更新
-
-		//CheckConnections(block);
+		block->GetType();
 	}
 
 	//スペースキー押下で右回転
@@ -94,7 +95,7 @@ void EasyGameScene::Update(void)
 		//BGM停止
 		StopSoundMem(bgmHandle_);
 
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().SetTimer(timer_->GetTime());
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 	if (timer_->GetTime() <= 0)
@@ -113,33 +114,7 @@ void EasyGameScene::Draw(void)
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
 
-	//スタート地点
-	//DrawBox(startX_ - gridSize_, startY_ + gridSize_,
-	//	startX_, startY_,
-	//	0xFFFF00, true);
 
-	//ゴール地点
-	//DrawBox(startX_ + (gridSize_ * 3), startY_ + (gridSize_),
-	//	startX_ + (gridSize_ * 4), startY_ + (gridSize_ * 2),
-	//	0xFFFF00, true);
-
-	//DrawBox(startX_, startY_,
-	//	startX_ + (160 * 3), startY_ + (160 * 3),
-	//	0xFF0000, true);
-
-
-
-	//for (auto block : blocks) {
-	//	if (CheckConnections(block)) {
-	//		// 接続されているブロックの下に黄色のボックスを表示
-	//		int blockX = block->GetX();
-	//		int blockY = block->GetY();
-	//		DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-	//			blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-	//			0xFFFF00, true);
-	//	}
-	//	//block->Draw();
-	//}
 
 	for (auto block : blocks) {
 		block->Draw();
@@ -159,24 +134,26 @@ void EasyGameScene::InitBlock(void)
 	gridSize_ = 160; // 1ブロックのサイズ
 
 	// ブロックの初期位置を計算（画面中央に配置）
-	startX_ = (Application::SCREEN_SIZE_X - (3 * gridSize_)) / 2;
-	startY_ = (Application::SCREEN_SIZE_Y - (3 * gridSize_)) / 2;
+	startX_ = (Application::SCREEN_SIZE_X - (BLOCK_NUM * gridSize_)) / 2;
+	startY_ = (Application::SCREEN_SIZE_Y - (BLOCK_NUM * gridSize_)) / 2;
 
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
+	for (int i = 0; i < BLOCK_NUM; ++i) {
+		for (int j = 0; j < BLOCK_NUM; ++j) {
 			int x = startX_ + j * gridSize_ + gridSize_ / 2; // 中心に配置
 			int y = startY_ + i * gridSize_ + gridSize_ / 2; // 中心に配置
 			Vector2 pos = { x,y };
 			// L字ブロックを配置（例として）
 			BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
 			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+			//BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+			//BlockBase* block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+			block->Init();
 			AddBlock(block);
 		}
 	}
 
 	Vector2 startPos = { startX_ - gridSize_ / 2,startY_ + gridSize_ / 2 };
-	Vector2 startCon = { 80,0 };
-	Vector2 gaolPos = { startX_ + (gridSize_ * 3) + 80, startY_ + (gridSize_ * 2) - 80 };
+	Vector2 gaolPos = { startX_ + (gridSize_ * BLOCK_NUM) + 80, startY_ + (gridSize_ * 2) - 80 };
 	startBlock = new Block(startPos, LoadGraph("Data/Image/StartBlock.png"));
 	startBlock->SetRot(0);
 	startBlock->SetConnection(Block::TYPE::ONE);
@@ -188,36 +165,6 @@ void EasyGameScene::InitBlock(void)
 void EasyGameScene::AddBlock(BlockBase* block)
 {
 	blocks.push_back(block);
-}
-
-bool EasyGameScene::CheckConnections(const BlockBase* block) const
-{
-	//// すべてのブロックが正しく接続されているかをチェック
-	//	for (size_t i = 0; i < blocks.size(); ++i) {
-	//		for (size_t j = i + 1; j < blocks.size(); ++j) {
-	//			if (AreBlocksConnected(blocks[i], blocks[j])) {
-	//				// 何らかの処理（例：接続の表示など）
-	//				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
-	//			}
-	//		}
-	//	}
-	//return true;
-
-	// // 指定されたブロックが他のブロックと接続されているかをチェック
-	//for (const auto& otherBlock : blocks) {
-	//	if (block != otherBlock && BlocksConnected(block, otherBlock)) {
-	//		return true;
-	//	}
-	//}
-	//return false;
-
-	// 指定されたブロックが他のブロックと接続されているかをチェック
-	for (const auto& otherBlock : blocks) {
-		if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
-			return true;
-		}
-	}
-	return false;
 }
 
 void EasyGameScene::BlockProcess(Vector2 pos)
@@ -234,40 +181,27 @@ void EasyGameScene::BlockProcess(Vector2 pos)
 		}
 	}
 
-	//selectBlock = nullptr;
-	////if (selectBlock) {
-	////	// ブロックを置く際にグリッドにスナップ
-	////	selectBlock->SnapToGrid(gridSize_, startX_, startY_);
-	////	selectBlock->IsNotHold();
-	////	selectBlock = nullptr;
-	////}
-	////else {
-	//for (auto block : blocks) {
-	//	int blockX = block->GetX();
-	//	int blockY = block->GetY();
-	//	int blockSize = gridSize_;
-
-	//	if (pos.x >= blockX - blockSize / 2 && pos.x <= blockX + blockSize / 2 &&
-	//		pos.y >= blockY - blockSize / 2 && pos.y <= blockY + blockSize / 2) {
-
-	//		selectBlock = block;
-	//		//block->IsHold();
-	//		break;
-
-	//	}
-	//}
-	////}
 }
 
 bool EasyGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
 {
+	int num1 = 0;
+	int num2 = 0;
+	if (block1->GetType() == BlockBase::TYPE::LSHAPE || block1->GetType() == BlockBase::TYPE::STRAIGHT) num1 = 2;
+	if (block1->GetType() == BlockBase::TYPE::PLUS) num1 = 4;
+	if (block1->GetType() == BlockBase::TYPE::TO) num1 = 3;	
+	if (block1->GetType() == BlockBase::TYPE::ONE) num1 = 1;	
+	if (block2->GetType() == BlockBase::TYPE::LSHAPE || block2->GetType() == BlockBase::TYPE::STRAIGHT) num2 = 2;
+	if (block2->GetType() == BlockBase::TYPE::PLUS) num2 = 4;
+	if (block2->GetType() == BlockBase::TYPE::TO) num2 = 3;
+	if (block2->GetType() == BlockBase::TYPE::ONE) num2 = 1;
 	// ブロック1の出口がブロック2の入口と一致するかを判定
-	for (int i = 0; i < 2; ++i) 
+	for (int i = 0; i < num1; ++i)
 	{
 		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
 		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
 
-		for (int j = 0; j < 2; ++j) 
+		for (int j = 0; j < num2; ++j)
 		{
 			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
 			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
@@ -356,37 +290,6 @@ void EasyGameScene::PropagateElectricity(BlockBase* block)
 			}
 		}
 	}
-}
-
-//void EasyGameScene::StartElectricity()
-//{
-//	// スタート地点のブロックに電気を通す
-//	if (!blocks.empty()) {
-//		startBlock->SetElectricity(true); // 仮に最初のブロックをスタート地点として設定
-//		PropagateElectricity(startBlock);
-//	}
-//}
-
-bool EasyGameScene::IsConnectedToGoal(void) const
-{
-	// ブロック1の出口がブロック2の入口と一致するかを判定
-	for (int i = 0; i < 2; ++i)
-	{
-		int exitX1 = blocks[5]->GetX() + blocks[5]->GetExits()[i].x;
-		int exitY1 = blocks[5]->GetY() + blocks[5]->GetExits()[i].y;
-
-		for (int j = 0; j < 2; ++j)
-		{
-			int exitX2 = goalBlock->GetX() + goalBlock->GetGoalExits()[j].x;
-			int exitY2 = goalBlock->GetY() + goalBlock->GetGoalExits()[j].y;
-			if (exitX1 == exitX2 && exitY1 == exitY2) {
-				// 向きを確認するために、出口の座標の差分を計算
-				return true;
-			}
-		}
-	}
-
-	return false;
 }
 
 void EasyGameScene::HighlightUpdate()

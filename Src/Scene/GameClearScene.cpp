@@ -27,7 +27,7 @@ void GameClearScene::Update(void)
 
 void GameClearScene::Draw(void)
 {
-	
+	int time = SceneManager::GetInstance().GetTimer();
 	DrawString(0, 0, "clear", 0xFFFFFF);
 
 	//クリア表示
@@ -51,4 +51,5 @@ void GameClearScene::Draw(void)
 	DrawString(190, 500, "4th　:", 0xffffff);
 	DrawString(190, 550, "5th　:", 0xffffff);
 
+	DrawFormatString(350, 350, 0xffffff,"%ds", time);
 }

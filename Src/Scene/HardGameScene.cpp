@@ -6,10 +6,13 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
+#include "../Object/Block/PlusBlock.h"
+#include "../Object/Block/ToBlock.h"
+#include "../Object/Block/StraightBlock.h"
 #include "../Object/Time/Timer.h"
 #include "HardGameScene.h"
 
-HardGameScene::HardGameScene(void) :selectBlock(nullptr)
+HardGameScene::HardGameScene(void)
 {
 	InitBlock();
 }
@@ -19,6 +22,8 @@ HardGameScene::~HardGameScene(void)
 	for (auto block : blocks) {
 		delete block;
 	}
+	blocks.clear();
+	delete goalBlock;
 }
 
 void HardGameScene::Init(void)
@@ -39,14 +44,14 @@ void HardGameScene::Init(void)
 	//BGMスタート
 	PlaySoundMem(bgmHandle_, DX_PLAYTYPE_LOOP);
 
-	//SE初期化
-	InitSoundEffect();
-
 	player_ = new Player;
 	player_->Init();
 
 	timer_ = new Timer;
 	timer_->Init();
+
+	//SE初期化
+	InitSoundEffect();
 
 	preHighlightBlock = nullptr;
 	highlightBlock = nullptr;
@@ -63,9 +68,15 @@ void HardGameScene::Update(void)
 
 	PlaySoundEffect();
 
-	for (auto block : blocks) {
+	// 接続状態を一旦クリア
+	ClearElectricity();
+
+	for (auto block : blocks)
+	{
 		block->Update();
-		CheckConnections(block);
+		startBlock->SetElectricity(true);
+		UpdateElectricity(startBlock); // スタート地点から再度電気の流れを更新
+		block->GetType();
 	}
 
 	//スペースキー押下で右回転
@@ -74,31 +85,19 @@ void HardGameScene::Update(void)
 		highlightBlock->RightRotate();
 	}
 
-	if (highlightBlock && ins.IsTrgMouseLeft())
-	{
-		highlightBlock->LeftRotate();
-	}
-
-	if (highlightBlock && ins.IsTrgMouseRight())
-	{
-		highlightBlock->RightRotate();
-	}
-
-	if (ins.IsTrgMouseLeft()) {
-		BlockProcess(ins.GetMousePos());
-	}
+	//クリックで回転
+	BlockProcess(ins.GetMousePos());
 
 	// シーン遷移
-	if (ins.IsTrgDown(KEY_INPUT_R))
+	if (goalBlock->HasElectricity())
 	{
 
 		//BGM停止
 		StopSoundMem(bgmHandle_);
 
-		//SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+		SceneManager::GetInstance().SetTimer(timer_->GetTime());
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
-
 	if (timer_->GetTime() <= 0)
 	{
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
@@ -108,52 +107,17 @@ void HardGameScene::Update(void)
 void HardGameScene::Draw(void)
 {
 
-	DrawString(0, 0, "HARDgame", 0xFFFFFF);
+	DrawString(0, 0, "game", 0xFFFFFF);
 
 	//背景
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
 
-	//スタート地点
-	DrawBox(startX_ - gridSize_, startY_ + gridSize_,
-		startX_, startY_,
-		0xFFFF00, true);
-
-	//ゴール地点
-	DrawBox(startX_ + (gridSize_ * 3), startY_ + (gridSize_),
-		startX_ + (gridSize_ * 4), startY_ + (gridSize_ * 2),
-		0xFFFF00, true);
-
-	DrawBox(startX_, startY_,
-		startX_ + (160 * 3), startY_ + (160 * 3),
-		0xFF0000, true);
-
-	for (auto block : blocks) {
-		if (CheckConnections(block)) {
-			// 接続されているブロックの下に黄色のボックスを表示
-			int blockX = block->GetX();
-			int blockY = block->GetY();
-			DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-				blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-				0xFFFF00, true);
-		}
-		//block->Draw();
-	}
-
-	// 選択されているブロックの下に緑のボックスを表示
-	if (selectBlock) {
-		int blockX = selectBlock->GetX();
-		int blockY = selectBlock->GetY();
-		DrawBox(blockX - gridSize_ / 2, blockY - gridSize_ / 2,
-			blockX + gridSize_ / 2, blockY + gridSize_ / 2,
-			GetColor(0, 255, 0), true);
-	}
-
 	for (auto block : blocks) {
 		block->Draw();
 	}
-	DrawString(0, 0, "HARDgame", 0xFFFFFF);
+	DrawString(0, 0, "EASYgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
 
@@ -168,26 +132,32 @@ void HardGameScene::InitBlock(void)
 	gridSize_ = 160; // 1ブロックのサイズ
 
 	// ブロックの初期位置を計算（画面中央に配置）
-	startX_ = (Application::SCREEN_SIZE_X - (3 * gridSize_)) / 2;
-	startY_ = (Application::SCREEN_SIZE_Y - (3 * gridSize_)) / 2;
+	startX_ = (Application::SCREEN_SIZE_X - (BLOCK_NUM_X * gridSize_)) / 2;
+	startY_ = (Application::SCREEN_SIZE_Y - (BLOCK_NUM_Y * gridSize_)) / 2;
 
-	for (int i = 0; i < 3; ++i) {
-		for (int j = 0; j < 3; ++j) {
+	for (int i = 0; i < BLOCK_NUM_Y; ++i) {
+		for (int j = 0; j < BLOCK_NUM_X; ++j) {
 			int x = startX_ + j * gridSize_ + gridSize_ / 2; // 中心に配置
 			int y = startY_ + i * gridSize_ + gridSize_ / 2; // 中心に配置
 			Vector2 pos = { x,y };
 			// L字ブロックを配置（例として）
-			BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+			//BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+			BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+			//BlockBase* block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+			block->Init();
 			AddBlock(block);
 		}
 	}
 
 	Vector2 startPos = { startX_ - gridSize_ / 2,startY_ + gridSize_ / 2 };
-	Vector2 gaolPos = { startX_ + (gridSize_ * 3) + 80, startY_ + (gridSize_ * 2) - 80 };
+	Vector2 gaolPos = { startX_ + (gridSize_ * BLOCK_NUM_X) + 80, startY_ + (gridSize_ * 2) - 80 };
 	startBlock = new Block(startPos, LoadGraph("Data/Image/StartBlock.png"));
 	startBlock->SetRot(0);
+	startBlock->SetConnection(Block::TYPE::ONE);
 	goalBlock = new Block(gaolPos, LoadGraph("Data/Image/GoolBlock.png"));
 	goalBlock->SetRot(180);
+	goalBlock->SetConnection(Block::TYPE::ONE);
 }
 
 void HardGameScene::AddBlock(BlockBase* block)
@@ -195,98 +165,129 @@ void HardGameScene::AddBlock(BlockBase* block)
 	blocks.push_back(block);
 }
 
-bool HardGameScene::BlocksConnected(const BlockBase* block1, const BlockBase* block2) const
-{
-	// ブロック1の接続方向がブロック2の位置に一致するかを判定
-	for (const auto& conn1 : block1->GetConnections()) {
-		int connX = block1->GetX() + conn1.first;
-		int connY = block1->GetY() + conn1.second;
-		if (connX == block2->GetX() && connY == block2->GetY()) {
-			for (const auto& conn2 : block2->GetConnections()) {
-				int revConnX = block2->GetX() + conn2.first;
-				int revConnY = block2->GetY() + conn2.second;
-				if (revConnX == block1->GetX() && revConnY == block1->GetY()) {
-					return true;
-				}
-			}
-		}
-	}
-	return false;
-}
-
-bool HardGameScene::CheckConnections(const BlockBase* block) const
-{
-	//// すべてのブロックが正しく接続されているかをチェック
-	//	for (size_t i = 0; i < blocks.size(); ++i) {
-	//		for (size_t j = i + 1; j < blocks.size(); ++j) {
-	//			if (AreBlocksConnected(blocks[i], blocks[j])) {
-	//				// 何らかの処理（例：接続の表示など）
-	//				SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
-	//			}
-	//		}
-	//	}
-	//return true;
-
-	// // 指定されたブロックが他のブロックと接続されているかをチェック
-	//for (const auto& otherBlock : blocks) {
-	//	if (block != otherBlock && BlocksConnected(block, otherBlock)) {
-	//		return true;
-	//	}
-	//}
-	//return false;
-
-	// 指定されたブロックが他のブロックと接続されているかをチェック
-	for (const auto& otherBlock : blocks) {
-		if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
-			return true;
-		}
-	}
-	return false;
-}
-
 void HardGameScene::BlockProcess(Vector2 pos)
 {
 	InputManager& ins = InputManager::GetInstance();
-	selectBlock = nullptr;
-	//if (selectBlock) {
-	//	// ブロックを置く際にグリッドにスナップ
-	//	selectBlock->SnapToGrid(gridSize_, startX_, startY_);
-	//	selectBlock->IsNotHold();
-	//	selectBlock = nullptr;
-	//}
-	//else {
-	for (auto block : blocks) {
-		int blockX = block->GetX();
-		int blockY = block->GetY();
-		int blockSize = gridSize_;
 
-		if (pos.x >= blockX - blockSize / 2 && pos.x <= blockX + blockSize / 2 &&
-			pos.y >= blockY - blockSize / 2 && pos.y <= blockY + blockSize / 2) {
-
-			selectBlock = block;
-			//block->IsHold();
-			break;
-
+	BlockBase* block = GetBlockAtPosition(pos.x, pos.y);
+	if (block) {
+		if (ins.IsTrgMouseLeft()) {
+			block->LeftRotate(); // 左クリックで左回転
+		}
+		else if (ins.IsTrgMouseRight()) {
+			block->RightRotate(); // 右クリックで右回転（右回転のロジックを追加する必要があります）
 		}
 	}
-	//}
+
 }
 
 bool HardGameScene::AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const
 {
+	int num1 = 0;
+	int num2 = 0;
+	if (block1->GetType() == BlockBase::TYPE::LSHAPE || block1->GetType() == BlockBase::TYPE::STRAIGHT) num1 = 2;
+	if (block1->GetType() == BlockBase::TYPE::PLUS) num1 = 4;
+	if (block1->GetType() == BlockBase::TYPE::TO) num1 = 3;
+	if (block1->GetType() == BlockBase::TYPE::ONE) num1 = 1;
+	if (block2->GetType() == BlockBase::TYPE::LSHAPE || block2->GetType() == BlockBase::TYPE::STRAIGHT) num2 = 2;
+	if (block2->GetType() == BlockBase::TYPE::PLUS) num2 = 4;
+	if (block2->GetType() == BlockBase::TYPE::TO) num2 = 3;
+	if (block2->GetType() == BlockBase::TYPE::ONE) num2 = 1;
 	// ブロック1の出口がブロック2の入口と一致するかを判定
-	for (int i = 0; i < 4; ++i) {
+	for (int i = 0; i < num1; ++i)
+	{
 		int exitX1 = block1->GetX() + block1->GetExits()[i].x;
 		int exitY1 = block1->GetY() + block1->GetExits()[i].y;
-		for (int j = 0; j < 4; ++j) {
+
+		for (int j = 0; j < num2; ++j)
+		{
 			int exitX2 = block2->GetX() + block2->GetExits()[j].x;
 			int exitY2 = block2->GetY() + block2->GetExits()[j].y;
 			if (exitX1 == exitX2 && exitY1 == exitY2) {
+				// 向きを確認するために、出口の座標の差分を計算
 				return true;
 			}
 		}
 	}
 	return false;
+
+}
+
+BlockBase* HardGameScene::GetBlockAtPosition(int x, int y) const
+{
+	for (auto block : blocks) {
+		int blockX = block->GetX();
+		int blockY = block->GetY();
+		int blockSize = gridSize_; // ブロックのサイズ（ピクセル単位）
+
+		// x, y がブロックの範囲内にあるか判定する条件
+		if (x >= blockX - blockSize / 2 && x <= blockX + blockSize / 2 &&
+			y >= blockY - blockSize / 2 && y <= blockY + blockSize / 2) {
+			return block;
+		}
+	}
+	return nullptr;
+}
+
+void HardGameScene::UpdateElectricity(BlockBase* startblock)
+{
+	std::vector<BlockBase*> tmpBlocks;
+	std::vector<BlockBase*> connectedBlocks;
+	connectedBlocks.emplace_back(startBlock);
+
+	while (connectedBlocks.size() > 0)
+	{
+
+		tmpBlocks.clear();
+
+		for (auto connectedBlock : connectedBlocks)
+		{
+			for (auto block : blocks)
+			{
+
+				// スタートブロックでないこと
+				// ブロック1の出口がブロック2の入口と一致するかを判定
+				if (startBlock != block
+					&& AreBlocksConnected(connectedBlock, block)
+					&& !block->HasElectricity())
+				{
+					// 電気を通す
+					block->SetElectricity(true);
+					tmpBlocks.emplace_back(block);
+				}
+			}
+			if (AreBlocksConnected(connectedBlock, goalBlock)
+				&& !goalBlock->HasElectricity())
+			{
+				// 電気を通す
+				goalBlock->SetElectricity(true);
+				tmpBlocks.emplace_back(goalBlock);
+			}
+		}
+
+		connectedBlocks = tmpBlocks;
+
+	}
+
+}
+
+void HardGameScene::ClearElectricity()
+{
+	for (auto block : blocks) {
+		block->SetElectricity(false);
+	}
+}
+
+void HardGameScene::PropagateElectricity(BlockBase* block)
+{
+	if (!block->HasElectricity()) {
+		block->SetElectricity(true);
+		for (auto otherBlock : blocks) {
+			if (block != otherBlock && AreBlocksConnected(block, otherBlock)) {
+				PropagateElectricity(otherBlock);
+			}
+		}
+	}
 }
 
 void HardGameScene::HighlightUpdate()

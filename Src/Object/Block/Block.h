@@ -13,9 +13,6 @@ public:
 	//デストラクタ
 	~Block(void) = default;
 
-	void Init(void) override;
-	void Update(void)override;
-
 protected:
 
 	void SetParam(void)override;

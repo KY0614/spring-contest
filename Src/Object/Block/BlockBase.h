@@ -10,7 +10,6 @@ public:
 
 	struct Exit {
 		int x, y;
-		int width, height; // 当たり判定のサイズ
 	};
 
 	enum class TYPE
@@ -34,8 +33,7 @@ public:
 
 	int GetX(void) const;
 	int GetY(void) const;
-	void IsHold(void);
-	void IsNotHold(void);
+	TYPE GetType(void) const{ return type_; }
 
 	void SetPos(Vector2 pos) {pos_ = pos;}
 	void SetRot(int rot) {rotate_ = rot;}
@@ -46,7 +44,6 @@ public:
 
 	const std::vector<std::pair<int, int>>& GetConnections() const;
 
-	virtual void SetParam(void) = 0;
 	void SnapToGrid(int gridSize, int startX, int startY); // グリッドにスナップする関数
 	
 	const Exit* GetExits() const;
@@ -77,6 +74,8 @@ protected:
 	Vector2 exitsPos_[4];
 	Vector2 startPos_;
 	Vector2 goalPos_;
+
+	virtual void SetParam(void) = 0;
 
 	//void UpdateConnections(void); // 接続方向を更新する
 

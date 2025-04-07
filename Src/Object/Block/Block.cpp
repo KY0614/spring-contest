@@ -11,29 +11,12 @@ Block::Block(Vector2 pos, int img):BlockBase(pos,img)
 	UpdateLShapeExits();
 }
 
-void Block::Init(void)
-{
-	auto& res = ResourceManager::GetInstance();
-
-	//âÊëúì«Ç›çûÇ›
-	img_ = res.Load(ResourceManager::SRC::BLOCK).handleId_;
-	if (img_ == -1)
-	{
-		return;
-	}
-
-}
-
-void Block::Update(void)
-{
-}
-
 void Block::SetParam(void)
 {
-	img_ = 0;
-	rotate_ = 0;
+	img_ = LoadGraph("Data/Image/LBlock.png");
 
-	pos_ = { 0,0 };
 	SetConnection(TYPE::LSHAPE);
+	type_ = TYPE::LSHAPE;
+	UpdatePlusExits();
 
 }
