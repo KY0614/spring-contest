@@ -14,6 +14,7 @@ TitleScene::TitleScene(void)
 
 TitleScene::~TitleScene(void)
 {
+	DeleteSoundMem(bgmHandle_);
 }
 
 void TitleScene::Init(void)
@@ -142,4 +143,5 @@ void TitleScene::Draw(void)
 void TitleScene::InitSoundEffect()
 {
 	seDecision_ = LoadSoundMem("Data/Sound/SE/se_decision.mp3");
+	ChangeVolumeSoundMem(255 * 30 / 100, seDecision_);
 }

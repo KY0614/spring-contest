@@ -19,7 +19,8 @@ public:
 		STRAIGHT,
 		TO,
 		ONE,
-		GOAL
+		GOAL,
+		PREVENT
 	};
 
 	BlockBase(Vector2 startPos,int img);
@@ -30,6 +31,8 @@ public:
 	virtual void Update(void);
 	virtual void Draw(void);
 	virtual void Release(void);
+
+	void UIDraw(void);
 
 	int GetX(void) const;
 	int GetY(void) const;
@@ -84,6 +87,7 @@ protected:
 	void UpdatePlusExits(); // 出口の座標を更新する
 	void UpdateToExits(); // 出口の座標を更新する
 	void UpdateExitsOne();
+	void UpdateExitsPre();
 
 private:
 

@@ -9,6 +9,7 @@
 #include "../Object/Block/PlusBlock.h"
 #include "../Object/Block/ToBlock.h"
 #include "../Object/Block/StraightBlock.h"
+#include "../Object/Block/PreventBlock.h"
 #include "../Object/Time/Timer.h"
 #include "HardGameScene.h"
 
@@ -24,6 +25,7 @@ HardGameScene::~HardGameScene(void)
 	}
 	blocks.clear();
 	delete goalBlock;
+	DeleteSoundMem(bgmHandle_);
 }
 
 void HardGameScene::Init(void)
@@ -86,13 +88,17 @@ void HardGameScene::Update(void)
 		PlaySoundMem(seRotate_, DX_PLAYTYPE_BACK);
 	}
 
+	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_R))
+	{
+		ReplaceBlockWithPlusBlock();
+	}
+
 	//クリックで回転
 	BlockProcess(ins.GetMousePos());
 
 	// シーン遷移
 	if (goalBlock->HasElectricity())
 	{
-
 		//BGM停止
 		StopSoundMem(bgmHandle_);
 
@@ -126,6 +132,18 @@ void HardGameScene::Draw(void)
 
 	player_->Draw();
 	timer_->Draw();
+	SetFontSize(32);
+	DrawFormatString(140, Application::SCREEN_SIZE_Y - 32, 0xffffff, "Rキーでハイライト表示のブロックを%d回置き換えできるよ", 2 - replaceCount);
+	SetFontSize(16);
+
+	if (replaceCount < 1) {
+		UIBlock1->UIDraw();
+		UIBlock2->UIDraw();
+	}
+	else if (replaceCount < 2)
+	{
+		UIBlock1->UIDraw();
+	}
 }
 
 void HardGameScene::InitBlock(void)
@@ -136,6 +154,8 @@ void HardGameScene::InitBlock(void)
 	startX_ = (Application::SCREEN_SIZE_X - (BLOCK_NUM_X * gridSize_)) / 2;
 	startY_ = (Application::SCREEN_SIZE_Y - (BLOCK_NUM_Y * gridSize_)) / 2;
 
+	bool preventBlock = false;
+
 	for (int i = 0; i < BLOCK_NUM_Y; ++i) {
 		for (int j = 0; j < BLOCK_NUM_X; ++j) {
 			int x = startX_ + j * gridSize_ + gridSize_ / 2; // 中心に配置
@@ -144,8 +164,36 @@ void HardGameScene::InitBlock(void)
 			// L字ブロックを配置（例として）
 			//BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
 			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
-			BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+			//BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
 			//BlockBase* block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+			//BlockBase* block = new PreventBlock(pos, LoadGraph("Data/Image/PreventBlock.png"));
+
+			BlockBase* block = nullptr;
+
+			// 中央の位置にPreventBlockを配置
+			if (!preventBlock && i == BLOCK_NUM_Y / 2 && j == BLOCK_NUM_X / 2) {
+				block = new PreventBlock(pos, LoadGraph("Data/Image/PreventBlock.png"));
+				preventBlock = true;
+			}
+			else {
+				// ランダムにブロックの種類を選択
+				int blockType = rand() % 9;
+
+				if (blockType < 4) {
+					block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));		//1.2.3
+				}
+				else if (blockType < 6) {
+					block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));	//3.4.5
+				}
+				else if (blockType < 8) {
+					block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));//5.6.7
+				}
+				else {
+					//block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));	//8.9.10.11.12
+					block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+				}
+			}
+
 			block->Init();
 			AddBlock(block);
 		}
@@ -159,6 +207,10 @@ void HardGameScene::InitBlock(void)
 	goalBlock = new Block(gaolPos, LoadGraph("Data/Image/GoolBlock.png"));
 	goalBlock->SetRot(180);
 	goalBlock->SetConnection(Block::TYPE::ONE);
+	Vector2 UIPos = { 60,Application::SCREEN_SIZE_Y - 48 };
+	UIBlock1 = new PlusBlock(UIPos, LoadGraph("Data/Image/PlusBlock.png"));
+	Vector2 UIPos2 = { Application::SCREEN_SIZE_X - 60,Application::SCREEN_SIZE_Y - 48 };
+	UIBlock2 = new PlusBlock(UIPos2, LoadGraph("Data/Image/PlusBlock.png"));
 }
 
 void HardGameScene::AddBlock(BlockBase* block)
@@ -293,6 +345,28 @@ void HardGameScene::PropagateElectricity(BlockBase* block)
 	}
 }
 
+void HardGameScene::ReplaceBlockWithPlusBlock()
+{
+	if (replaceCount >= 2) return; // 置き換え回数が2回を超えたら処理を終了
+
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+	BlockBase* block = GetBlockAtPosition(mouseX, mouseY);
+
+	if (block && dynamic_cast<PlusBlock*>(block) == nullptr) {
+		Vector2 pos = block->GetPos();
+
+		// 元のブロックを削除
+		auto it = std::find(blocks.begin(), blocks.end(), block);
+		if (it != blocks.end()) {
+			delete* it;
+			*it = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+			(*it)->Init();
+		}
+		replaceCount++;
+	}
+}
+
 void HardGameScene::HighlightUpdate()
 {
 	InputManager& ins = InputManager::GetInstance();
@@ -326,7 +400,6 @@ void HardGameScene::HighlightDraw()
 
 		DrawBox(highlightPos_.x, highlightPos_.y, highlightPos_.x + gridSize_, highlightPos_.y + gridSize_, 0xffff00, false);
 	}
-
 }
 
 void HardGameScene::InitSoundEffect()

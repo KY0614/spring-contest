@@ -18,6 +18,8 @@ public:
 	void Draw(void) override;
 
 private:
-
+	int cat1Img_;
+	int cat2Img_;
+	int img_;
 };
 

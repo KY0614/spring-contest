@@ -74,6 +74,12 @@ void BlockBase::Release(void)
 	DeleteGraph(img_);
 }
 
+void BlockBase::UIDraw(void)
+{
+	DrawRotaGraph(pos_.x, pos_.y,
+		0.3f, rotate_ * DX_PI_F / 180, img_, true, false);
+}
+
 int BlockBase::GetX(void) const
 {
 	return pos_.x;
@@ -102,7 +108,8 @@ void BlockBase::RightRotate(void)
 	case BlockBase::TYPE::TO:
 		UpdateToExits();
 		break;
-	case BlockBase::TYPE::ONE:
+	case BlockBase::TYPE::PREVENT:
+		UpdateExitsPre();
 		break;
 	case BlockBase::TYPE::GOAL:
 		break;
@@ -130,7 +137,8 @@ void BlockBase::LeftRotate(void)
 	case BlockBase::TYPE::TO:
 		UpdateToExits();
 		break;
-	case BlockBase::TYPE::ONE:
+	case BlockBase::TYPE::PREVENT:
+		UpdateExitsPre();
 		break;
 	case BlockBase::TYPE::GOAL:
 		break;
@@ -202,6 +210,10 @@ void BlockBase::SetConnection(TYPE type)
 		break;
 	case BlockBase::TYPE::ONE:
 		UpdateExitsOne();
+		break;
+
+	case BlockBase::TYPE::PREVENT:
+		UpdateExitsPre();
 		break;
 	default:
 		break;
@@ -398,4 +410,12 @@ void BlockBase::UpdateExitsOne()
 		exitsPos_[0] = { 0,-80 };
 		break;
 	}
+}
+
+void BlockBase::UpdateExitsPre()
+{
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
 }

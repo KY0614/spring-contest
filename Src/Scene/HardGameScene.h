@@ -35,6 +35,8 @@ private:
 	std::vector<BlockBase*> blocks;
 	BlockBase* startBlock;
 	BlockBase* goalBlock;
+	BlockBase* UIBlock1;
+	BlockBase* UIBlock2;
 	int gridSize_;
 	int startX_;
 	int startY_;
@@ -48,6 +50,8 @@ private:
 	BlockBase* highlightBlock;		//ハイライトをつけるブロック
 	BlockBase* preHighlightBlock;	//
 
+	int replaceCount;
+
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);
 
@@ -57,6 +61,7 @@ private:
 	void UpdateElectricity(BlockBase* block);
 	void ClearElectricity();	//電気の状態を全部リセット
 	void PropagateElectricity(BlockBase* block); // 電気を伝播させる
+	void ReplaceBlockWithPlusBlock();
 
 	void HighlightUpdate();
 	void HighlightDraw();

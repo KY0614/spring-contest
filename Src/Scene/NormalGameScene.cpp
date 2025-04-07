@@ -24,6 +24,7 @@ NormalGameScene::~NormalGameScene(void)
 	}
 	blocks.clear();
 	delete goalBlock;
+	DeleteSoundMem(bgmHandle_);
 }
 
 void NormalGameScene::Init(void)
@@ -86,6 +87,11 @@ void NormalGameScene::Update(void)
 		PlaySoundMem(seRotate_, DX_PLAYTYPE_BACK);
 	}
 
+	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_R))
+	{
+		ReplaceBlockWithPlusBlock();
+	}
+
 	//クリックで回転
 	BlockProcess(ins.GetMousePos());
 
@@ -126,6 +132,13 @@ void NormalGameScene::Draw(void)
 
 	player_->Draw();
 	timer_->Draw();
+	SetFontSize(32);
+	DrawFormatString(140, Application::SCREEN_SIZE_Y - 32, 0xffffff, "Rキーでハイライト表示のブロックを%d回置き換えできるよ", 1 - replaceCount);
+	SetFontSize(16);
+
+	if (replaceCount < 1) {
+		UIBlock1->UIDraw();
+	}
 }
 
 void NormalGameScene::InitBlock(void)
@@ -141,11 +154,44 @@ void NormalGameScene::InitBlock(void)
 			int x = startX_ + j * gridSize_ + gridSize_ / 2; // 中心に配置
 			int y = startY_ + i * gridSize_ + gridSize_ / 2; // 中心に配置
 			Vector2 pos = { x,y };
-			// L字ブロックを配置（例として）
+			// L字ブロックを配置
 			//BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
 			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
-			BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+			//BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
 			//BlockBase* block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+
+			int blockType = rand() % 10;
+			BlockBase* block = nullptr;
+
+		/*	switch (blockType) {
+			case 0:
+				block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+				break;
+			case 1:
+				block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+				break;
+			case 2:
+				block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+				break;
+			case 3:
+				block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+				break;
+			}*/
+
+			if (blockType < 3) {
+				block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+			}
+			else if (blockType < 6) {
+				block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
+			}
+			else if (blockType < 8) {
+				block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));
+			}
+			else {
+				block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+			}
+
+
 			block->Init();
 			AddBlock(block);
 		}
@@ -159,6 +205,8 @@ void NormalGameScene::InitBlock(void)
 	goalBlock = new Block(gaolPos, LoadGraph("Data/Image/GoolBlock.png"));
 	goalBlock->SetRot(180);
 	goalBlock->SetConnection(Block::TYPE::ONE);
+	Vector2 UIPos = { 60,Application::SCREEN_SIZE_Y - 48 };
+	UIBlock1 = new PlusBlock(UIPos, LoadGraph("Data/Image/PlusBlock.png"));
 }
 
 void NormalGameScene::AddBlock(BlockBase* block)
@@ -290,6 +338,28 @@ void NormalGameScene::PropagateElectricity(BlockBase* block)
 				PropagateElectricity(otherBlock);
 			}
 		}
+	}
+}
+
+void NormalGameScene::ReplaceBlockWithPlusBlock()
+{
+	if (replaceCount >= 1) return; // 置き換え回数が1回を超えたら処理を終了
+
+	int mouseX, mouseY;
+	GetMousePoint(&mouseX, &mouseY);
+	BlockBase* block = GetBlockAtPosition(mouseX, mouseY);
+
+	if (block && dynamic_cast<PlusBlock*>(block) == nullptr) {
+		Vector2 pos = block->GetPos();
+
+		// 元のブロックを削除
+		auto it = std::find(blocks.begin(), blocks.end(), block);
+		if (it != blocks.end()) {
+			delete* it;
+			*it = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
+			(*it)->Init();
+		}
+		replaceCount++;
 	}
 }
 
