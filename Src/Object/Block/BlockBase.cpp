@@ -3,7 +3,7 @@
 #include "../../Manager/SceneManager.h"
 #include "BlockBase.h"
 
-BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),isHold_(false),rotate_(0)
+BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),rotate_(0)
 {
 	// ランダムに初期角度を設定
 	int randomAngle = GetRand(3) * 90; // 0, 1, 2, 3 のいずれかを生成し、×90度にする
@@ -12,10 +12,18 @@ BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),isHold_
 
 	// 初期出口の座標を設定
 	int halfSize = 320 / 2 * 0.5;
-	exits[0] = { 0, 0 };  // 右
-	exits[1] = { 0, 0 };  // 下
+	exits[0] = { 0, 0, 10, 10 }; // 当たり判定のサイズを設定
+	exits[1] = { 0, 0, 10, 10 }; // 当たり判定のサイズを設定
 	goalExits[0] = { -halfSize, 0 };
 	startExits[0] = { halfSize, 0 };
+
+	exitsPos_[0] = { 0,0 };
+	exitsPos_[1] = { 0,0 };
+	exitsPos_[2] = { 0,0 };
+	exitsPos_[3] = { 0,0 };
+
+	startPos_ = { -80,0 };
+	goalPos_ = { 80,0 };
 	
 	UpdateExits();
 }
@@ -28,21 +36,11 @@ void BlockBase::Init(void)
 void BlockBase::Update(void)
 {
 	auto& ins = InputManager::GetInstance();
-
-	// マウス操作による位置更新
-	if (isHold_) {
-		int mouseX, mouseY;
-		GetMousePoint(&mouseX, &mouseY);
-		
-		//pos_.x = mouseX;
-		//pos_.y = mouseY;		
-		pos_.x = ins.GetMousePos().x;
-		pos_.y = ins.GetMousePos().y;
-	}
 }
 
 void BlockBase::Draw(void)
 {
+
 	// ブロックを描画
 	if (hasElectricity) {
 		// 電気が通っている場合の表示
@@ -56,6 +54,7 @@ void BlockBase::Draw(void)
 			pos_.x + 80, pos_.y + 80,
 			0xFF0000, true);
 	}
+
 	DrawRotaGraph(pos_.x, pos_.y,
 		0.5f, rotate_ * DX_PI_F / 180, img_, true, false);
 }
@@ -75,19 +74,10 @@ int BlockBase::GetY(void) const
 	return pos_.y;
 }
 
-void BlockBase::IsHold(void)
-{
-	isHold_ = true;
-}
-
-void BlockBase::IsNotHold(void)
-{
-	isHold_ = false;
-}
-
 void BlockBase::RightRotate(void)
 {
 	rotate_ = (rotate_ + 90+ 360) % 360;
+
 	//UpdateConnections();
 	UpdateExits();
 }
@@ -142,6 +132,29 @@ bool BlockBase::IsConnected(const BlockBase* otherBlock) const
 	return false;
 }
 
+void BlockBase::SetConnection(TYPE type)
+{
+	type_ = type;
+
+	switch (type)
+	{
+	case BlockBase::TYPE::LSHAPE:
+		UpdateExits();
+		break;
+	case BlockBase::TYPE::PLUS:
+		UpdateExits();
+		break;
+	case BlockBase::TYPE::STRAIGHT:
+		UpdateExits();
+		break;
+	case BlockBase::TYPE::ONE:
+		UpdateExitsOne();
+		break;
+	default:
+		break;
+	}
+}
+
 //void BlockBase::UpdateConnections(void)
 //{
 //	// 90度回転ごとに接続方向を更新
@@ -155,27 +168,84 @@ bool BlockBase::IsConnected(const BlockBase* otherBlock) const
 
 void BlockBase::UpdateExits()
 {
+
 	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
+
+	goalExits[0] = { -halfSize, 0 };
+	startExits[0] = { halfSize, 0 };
+
 	switch (rotate_) {
 	case 0:
 		exits[0] = { -halfSize, 0 };  // 左
 		exits[1] = { 0, -halfSize };  // 上
-		goalExits[0] = { halfSize, 0 };  // ゴール用の出口を右に設定
+
+		//直接当たり判定する用
+		exitsPos_[0] = { -80,0 };
+		exitsPos_[1] = { 0, 80 };
 		break;
 	case 90:
 		exits[0] = { 0, -halfSize };  // 上
 		exits[1] = { halfSize, 0 };   // 右
-		goalExits[0] = { halfSize, 0 };  // ゴール用の出口を右に設定
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 0,-80 };
+		exitsPos_[1] = { -80, 0 };
 		break;
 	case 180:
 		exits[0] = { halfSize, 0 };   // 右
 		exits[1] = { 0, halfSize };   // 下
-		goalExits[0] = { -halfSize, 0 };  // ゴール用の出口を左に設定
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 80,0 };
+		exitsPos_[1] = { 0, -80 };
+		
 		break;
 	case 270:
 		exits[0] = { 0, halfSize };   // 下
 		exits[1] = { -halfSize, 0 };  // 左
-		goalExits[0] = { 0, -halfSize };  // ゴール用の出口を上に設定
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 0,80 };
+		exitsPos_[1] = { 80, 0 };
+		break;
+	}
+}
+
+void BlockBase::UpdateExitsOne()
+{
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+
+	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
+
+	goalExits[0] = { -halfSize, 0 };
+	startExits[0] = { halfSize, 0 };
+
+	switch (rotate_) {
+	case 0:
+		exits[0] = { halfSize, 0 };   // 右
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 80,0 };
+		break;
+	case 90:
+		exits[0] = { 0, halfSize };   // 下
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 0, 80 };
+		break;
+	case 180:
+		exits[0] = { -halfSize, 0 };  // 左
+
+		//直接当たり判定する用
+		exitsPos_[0] = { -80, 0 };
+
+		break;
+	case 270:
+		exits[0] = { 0, -halfSize };  // 上
+
+		//直接当たり判定する用
+		exitsPos_[0] = { 0,-80 };
 		break;
 	}
 }

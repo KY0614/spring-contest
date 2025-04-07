@@ -10,6 +10,9 @@ Block::Block(Vector2 pos, int img):BlockBase(pos,img)
 	connections = { {0,0},{1,1} };
 	exits[0] = { -80, 0 }; // ç∂
 	exits[1] = { 0, -80 }; // è„
+
+	exitsPos_[0] = { -80,0 };
+	exitsPos_[1] = { 0, 80 };
 	UpdateExits();
 }
 
@@ -29,17 +32,16 @@ void Block::Init(void)
 void Block::Update(void)
 {
 	auto& ins = InputManager::GetInstance();
-	if (isHold_)
-	{
-		pos_ = ins.GetMousePos();
-	}
+
 }
 
 void Block::SetParam(void)
 {
 	img_ = 0;
 	rotate_ = 0;
-	isHold_ = false;
+
 	pos_ = { 0,0 };
+	SetConnection(TYPE::LSHAPE);
+
 	//UpdateConnections();
 }
