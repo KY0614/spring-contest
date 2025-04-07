@@ -164,7 +164,7 @@ void HardGameScene::InitBlock(void)
 			int y = startY_ + i * gridSize_ + gridSize_ / 2; // 中心に配置
 			Vector2 pos = { x,y };
 			// L字ブロックを配置（例として）
-			BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+			//BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
 			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
 			//BlockBase* block = new ToBlock(pos, LoadGraph("Data/Image/ToBlock.png"));
 			//BlockBase* block = new StraightBlock(pos, LoadGraph("Data/Image/LineBlock.png"));

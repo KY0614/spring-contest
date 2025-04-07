@@ -21,7 +21,7 @@ void GameClearScene::Init(void)
 	{
 		return;
 	}
-}
+
 	cat1Img_ = LoadGraph("Data/Image/cat_1.png");
 	if (cat1Img_ == -1) return;
 	cat2Img_ = LoadGraph("Data/Image/cat_2.png");
@@ -38,12 +38,12 @@ void GameClearScene::Update(void)
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
 	}
 
-	if (img_ == cat1Img_ && ins.IsTrgDown(KEY_INPUT_R))
+	if (catImg_ == cat1Img_ && ins.IsTrgDown(KEY_INPUT_R))
 	{
-		img_ = cat2Img_;
+		catImg_ = cat2Img_;
 	}
-	else if(img_ == cat2Img_ && ins.IsTrgDown(KEY_INPUT_R)) {
-		img_ = cat1Img_;
+	else if(catImg_ == cat2Img_ && ins.IsTrgDown(KEY_INPUT_R)) {
+		catImg_ = cat1Img_;
 	}
 }
 
