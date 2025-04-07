@@ -34,7 +34,7 @@ void ResourceManager::Init(void)
 	// タイトル画像
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title.png");
 	resourcesMap_.emplace(SRC::TITLE, std::move(res));
-
+	//タイトルレンチ
 	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "TitleR.png");
 	resourcesMap_.emplace(SRC::TITLER, std::move(res));
 	// セレクト画像

@@ -100,6 +100,8 @@ void NormalGameScene::Update(void)
 	}
 	if (timer_->GetTime() <= 0)
 	{
+		//BGM’âŽ~
+		StopSoundMem(bgmHandle_);
 		SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::GAMECLEAR);
 	}
 }
