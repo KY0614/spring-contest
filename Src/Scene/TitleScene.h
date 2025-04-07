@@ -22,6 +22,7 @@ private:
 
 	
 	int img_;//‰æ‘œ
+	int backImg_;//‰æ‘œ
 	int imgr_;
 	int imgBlock_;
 	float rotate_;	//Šp“x

@@ -83,6 +83,7 @@ void HardGameScene::Update(void)
 	if (highlightBlock && ins.IsTrgDown(KEY_INPUT_SPACE))
 	{
 		highlightBlock->RightRotate();
+		PlaySoundMem(seRotate_, DX_PLAYTYPE_BACK);
 	}
 
 	//クリックで回転
@@ -107,7 +108,7 @@ void HardGameScene::Update(void)
 void HardGameScene::Draw(void)
 {
 
-	DrawString(0, 0, "game", 0xFFFFFF);
+	//DrawString(0, 0, "game", 0xFFFFFF);
 
 	//背景
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
@@ -117,7 +118,7 @@ void HardGameScene::Draw(void)
 	for (auto block : blocks) {
 		block->Draw();
 	}
-	DrawString(0, 0, "EASYgame", 0xFFFFFF);
+	//DrawString(0, 0, "EASYgame", 0xFFFFFF);
 	startBlock->Draw();
 	goalBlock->Draw();
 
@@ -173,9 +174,11 @@ void HardGameScene::BlockProcess(Vector2 pos)
 	if (block) {
 		if (ins.IsTrgMouseLeft()) {
 			block->LeftRotate(); // 左クリックで左回転
+			PlaySoundMem(seRotate_, DX_PLAYTYPE_BACK);
 		}
 		else if (ins.IsTrgMouseRight()) {
-			block->RightRotate(); // 右クリックで右回転（右回転のロジックを追加する必要があります）
+			block->RightRotate(); // 右クリックで右回転
+			PlaySoundMem(seRotate_, DX_PLAYTYPE_BACK);
 		}
 	}
 
@@ -330,6 +333,7 @@ void HardGameScene::InitSoundEffect()
 {
 	seTouch_ = LoadSoundMem("Data/Sound/SE/se_touch.mp3");
 	seRotate_ = LoadSoundMem("Data/Sound/SE/se_rotate.mp3");
+	ChangeVolumeSoundMem(255 * 30 / 100, seRotate_);
 }
 
 void HardGameScene::PlaySoundEffect()

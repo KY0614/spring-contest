@@ -88,7 +88,7 @@ void GameScene::Update(void)
 void GameScene::Draw(void)
 {
 	
-	DrawString(0, 0, "game", 0xFFFFFF);
+	//DrawString(0, 0, "game", 0xFFFFFF);
 
 	//îwåi
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,

@@ -98,10 +98,10 @@ void SelectScene::Draw(void)
 		1.0f, 0.0f, img_, true, false);
 
 
-	DrawString(0, 0, "select", 0xFFFFFF);
+	//DrawString(0, 0, "select", 0xFFFFFF);
 
 	SetFontSize(96);
-	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("難易度選択",select )) / 2,10, "難易度選択", 0xffffff);
+	DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("難易度選択",select )) / 2,80, "難易度選択", 0xffffff);
 	if (select_ == SELECT_TYPE::EASY)
 	{
 		DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("EASY", easy)) / 2, Application::SCREEN_SIZE_Y / 2 -128, "EASY", 0xffffff);

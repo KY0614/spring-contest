@@ -144,7 +144,7 @@ void Player::InputUpdeta(void)
 //‰æ‘œ
 void Player::Draw(void)
 {
-	DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, false);
+	//DrawBox(boxPosX_, boxPosY_, boxPosX_ + SIZE_X, boxPosY_ + SIZE_Y, 0x0000ff, false);
 	DrawRotaGraph(mousePosX_+30,
 		mousePosY_+30,
 		1.0f, 0.0f, img_, true, false);
