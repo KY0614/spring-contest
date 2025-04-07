@@ -1,17 +1,16 @@
-//#pragma once
+#pragma once
 #include "BlockBase.h"
 
-class Block : public  BlockBase
+class PlusBlock : public  BlockBase
 {
 public:
-
 	static constexpr int BLOCK_SIZE = 320;
-	
+
 	//コンストラクタ	
-	Block(Vector2 pos,int img);
+	PlusBlock(Vector2 pos, int img);
 
 	//デストラクタ
-	~Block(void) = default;
+	~PlusBlock(void) = default;
 
 protected:
 

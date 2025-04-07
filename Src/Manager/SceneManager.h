@@ -44,6 +44,9 @@ public:
 	// 状態遷移
 	void ChangeScene(SCENE_ID nextId);
 
+	void SetTimer(int time) { clearTime_ = time; }
+	int GetTimer(void) { return clearTime_; }
+
 	// シーンIDの取得
 	SCENE_ID GetSceneID(void);
 
@@ -54,6 +57,8 @@ public:
 	std::weak_ptr<Camera> GetCamera(void) const;
 
 private:
+
+	int clearTime_;
 
 	// 静的インスタンス
 	static SceneManager* instance_;

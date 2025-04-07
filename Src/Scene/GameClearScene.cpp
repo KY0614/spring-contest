@@ -40,6 +40,7 @@ void GameClearScene::Draw(void)
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
 	
+	int time = SceneManager::GetInstance().GetTimer();
 	DrawString(0, 0, "clear", 0xFFFFFF);
 
 	//クリア表示
@@ -63,4 +64,5 @@ void GameClearScene::Draw(void)
 	DrawString(190, 530, "4th　:", 0xffffff);
 	DrawString(190, 580, "5th　:", 0xffffff);
 
+	DrawFormatString(350, 350, 0xffffff,"%ds", time);
 }

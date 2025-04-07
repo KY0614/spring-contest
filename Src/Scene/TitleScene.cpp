@@ -29,6 +29,12 @@ void TitleScene::Init(void)
 
 	auto& res = ResourceManager::GetInstance();
 
+	backImg_ = res.Load(ResourceManager::SRC::SELECT).handleId_;
+	if (backImg_ == -1)
+	{
+		return;
+	}
+
 	//画像読み込み
 	img_ = res.Load(ResourceManager::SRC::TITLE).handleId_;
 	if (img_ == -1)
@@ -104,6 +110,11 @@ void TitleScene::Draw(void)
 
 	DrawBox(0, 0, Application::SCREEN_SIZE_X/2,
 		Application::SCREEN_SIZE_Y, cr_, true);
+
+	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
+		Application::SCREEN_SIZE_Y / 2,
+		1.0f, 0.0f, backImg_, true, false);
+
 	DrawRotaGraph(Application::SCREEN_SIZE_X / 2,
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, img_, true, false);
@@ -114,7 +125,7 @@ void TitleScene::Draw(void)
 		Application::SCREEN_SIZE_Y / 2,
 		1.0f, 0.0f, imgr_, true, false);
 	
-	DrawString(0, 0, "title", cr_);
+	//DrawString(0, 0, "title", cr_);
 
 	int StrLen;
 	StrLen = strlen("スペースを押して次へ");

@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Block\PlusBlock.cpp" />
     <ClCompile Include="Src\Scene\HardGameScene.cpp" />
     <ClCompile Include="Src\Scene\NormalGameScene.cpp" />
     <ClCompile Include="Src\Scene\EasyGameScene.cpp" />
@@ -41,8 +42,11 @@
     <ClCompile Include="Src\Scene\TitleScene.cpp" />
     <ClCompile Include="Src\Utility\AsoUtility.cpp" />
     <ClCompile Include="Src\Object\Time\Timer.cpp" />
+    <ClCompile Include="Src\Object\Block\ToBlock.cpp" />
+    <ClCompile Include="Src\Object\Block\StraightBlock.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Block\PlusBlock.h" />
     <ClInclude Include="Src\Scene\HardGameScene.h" />
     <ClInclude Include="Src\Scene\NormalGameScene.h" />
     <ClInclude Include="Src\Scene\EasyGameScene.h" />
@@ -65,6 +69,8 @@
     <ClInclude Include="Src\Scene\TitleScene.h" />
     <ClInclude Include="Src\Utility\AsoUtility.h" />
     <ClInclude Include="Src\Object\Time\Timer.h" />
+    <ClInclude Include="Src\Object\Block\ToBlock.h" />
+    <ClInclude Include="Src\Object\Block\StraightBlock.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>

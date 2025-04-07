@@ -12,6 +12,9 @@ class HardGameScene : public SceneBase
 {
 public:
 
+	static constexpr int BLOCK_NUM_X = 5;
+	static constexpr int BLOCK_NUM_Y = 4;
+
 	// コンストラクタ
 	HardGameScene(void);
 
@@ -30,7 +33,6 @@ private:
 	int bgmHandle_;		//BGM
 
 	std::vector<BlockBase*> blocks;
-	BlockBase* selectBlock;
 	BlockBase* startBlock;
 	BlockBase* goalBlock;
 	int gridSize_;
@@ -48,10 +50,13 @@ private:
 
 	void InitBlock(void);
 	void AddBlock(BlockBase* block);
-	bool BlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
-	bool CheckConnections(const BlockBase* block) const;
-	void BlockProcess(Vector2 pos);
+
+	void BlockProcess(Vector2 pos);	//ブロックの操作処理
 	bool AreBlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
+	BlockBase* GetBlockAtPosition(int x, int y) const; // マウス位置にあるブロックを取得する
+	void UpdateElectricity(BlockBase* block);
+	void ClearElectricity();	//電気の状態を全部リセット
+	void PropagateElectricity(BlockBase* block); // 電気を伝播させる
 
 	void HighlightUpdate();
 	void HighlightDraw();
@@ -59,4 +64,3 @@ private:
 	void InitSoundEffect();
 	void PlaySoundEffect();
 };
-
