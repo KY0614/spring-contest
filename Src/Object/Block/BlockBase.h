@@ -18,6 +18,7 @@ public:
 		LSHAPE,
 		PLUS,
 		STRAIGHT,
+		TO,
 		ONE,
 		GOAL
 	};
@@ -66,7 +67,7 @@ protected:
 	int rotate_;	//角度
 	Vector2 pos_;	//座標(int型)
 	std::vector<std::pair<int, int>> connections; // 接続可能な方向
-	Exit exits[2];			// 出口の座標の配列
+	Exit exits[4];			// 出口の座標の配列
 	Exit goalExits[1];		// 出口
 	Exit startExits[1];		// 起点
 	bool hasElectricity;	// 電気が通っているかどうか
@@ -79,7 +80,10 @@ protected:
 
 	//void UpdateConnections(void); // 接続方向を更新する
 
-	void UpdateExits(); // 出口の座標を更新する
+	void UpdateLShapeExits(); // 出口の座標を更新する
+	void UpdateStraightExits(); // 出口の座標を更新する
+	void UpdatePlusExits(); // 出口の座標を更新する
+	void UpdateToExits(); // 出口の座標を更新する
 	void UpdateExitsOne();
 
 private:

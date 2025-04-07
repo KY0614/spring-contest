@@ -6,6 +6,7 @@
 #include "../Manager/InputManager.h"
 #include "../Object/Player/Player.h"
 #include "../Object/Block/Block.h"
+#include "../Object/Block/PlusBlock.h"
 #include "../Object/Time/Timer.h"
 #include "EasyGameScene.h"
 
@@ -168,6 +169,7 @@ void EasyGameScene::InitBlock(void)
 			Vector2 pos = { x,y };
 			// L字ブロックを配置（例として）
 			BlockBase* block = new Block(pos, LoadGraph("Data/Image/LBlock.png"));
+			//BlockBase* block = new PlusBlock(pos, LoadGraph("Data/Image/PlusBlock.png"));
 			AddBlock(block);
 		}
 	}

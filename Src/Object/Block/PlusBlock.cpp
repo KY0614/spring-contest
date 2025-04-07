@@ -1,17 +1,17 @@
 #include <DxLib.h>
 #include "../../Manager/ResourceManager.h"
 #include "BlockBase.h"
-#include "Block.h"
+#include "PlusBlock.h"
 
-Block::Block(Vector2 pos, int img):BlockBase(pos,img)
-{	
+PlusBlock::PlusBlock(Vector2 pos, int img) :BlockBase(pos, img)
+{
 	//exits[0] = { -80, 0 }; // ç∂
 	//exits[1] = { 0, -80 }; // è„
 
-	UpdateLShapeExits();
+	UpdatePlusExits();
 }
 
-void Block::Init(void)
+void PlusBlock::Init(void)
 {
 	auto& res = ResourceManager::GetInstance();
 
@@ -21,19 +21,17 @@ void Block::Init(void)
 	{
 		return;
 	}
-
 }
 
-void Block::Update(void)
+void PlusBlock::Update(void)
 {
 }
 
-void Block::SetParam(void)
+void PlusBlock::SetParam(void)
 {
 	img_ = 0;
 	rotate_ = 0;
 
 	pos_ = { 0,0 };
-	SetConnection(TYPE::LSHAPE);
-
+	SetConnection(TYPE::PLUS);
 }

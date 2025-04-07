@@ -25,7 +25,10 @@ BlockBase::BlockBase(Vector2 startPos, int img):pos_(startPos),img_(img),rotate_
 	startPos_ = { -80,0 };
 	goalPos_ = { 80,0 };
 	
-	UpdateExits();
+	//UpdateLShapeExits();
+	//UpdatePlusExits();
+	//UpdateStraightExits();
+	//UpdateToExits();
 }
 
 
@@ -79,7 +82,8 @@ void BlockBase::RightRotate(void)
 	rotate_ = (rotate_ + 90+ 360) % 360;
 
 	//UpdateConnections();
-	UpdateExits();
+	UpdateLShapeExits();
+	//UpdatePlusExits();
 }
 
 void BlockBase::LeftRotate(void)
@@ -87,7 +91,8 @@ void BlockBase::LeftRotate(void)
 	rotate_ = (rotate_ - 90 + 360) % 360;
 
 	//UpdateConnections();
-	UpdateExits();
+	UpdateLShapeExits();
+	//UpdatePlusExits();
 }
 
 const std::vector<std::pair<int, int>>& BlockBase::GetConnections() const
@@ -139,13 +144,17 @@ void BlockBase::SetConnection(TYPE type)
 	switch (type)
 	{
 	case BlockBase::TYPE::LSHAPE:
-		UpdateExits();
+		UpdateLShapeExits();
 		break;
 	case BlockBase::TYPE::PLUS:
-		UpdateExits();
+		UpdatePlusExits();
 		break;
 	case BlockBase::TYPE::STRAIGHT:
-		UpdateExits();
+		UpdateStraightExits();
+		break;	
+	
+	case BlockBase::TYPE::TO:
+		UpdateToExits();
 		break;
 	case BlockBase::TYPE::ONE:
 		UpdateExitsOne();
@@ -166,47 +175,141 @@ void BlockBase::SetConnection(TYPE type)
 //	}
 //}
 
-void BlockBase::UpdateExits()
+void BlockBase::UpdateLShapeExits()
 {
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
 
 	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
-
-	goalExits[0] = { -halfSize, 0 };
-	startExits[0] = { halfSize, 0 };
 
 	switch (rotate_) {
 	case 0:
 		exits[0] = { -halfSize, 0 };  // 左
 		exits[1] = { 0, -halfSize };  // 上
 
-		//直接当たり判定する用
-		exitsPos_[0] = { -80,0 };
-		exitsPos_[1] = { 0, 80 };
 		break;
 	case 90:
 		exits[0] = { 0, -halfSize };  // 上
 		exits[1] = { halfSize, 0 };   // 右
 
-		//直接当たり判定する用
-		exitsPos_[0] = { 0,-80 };
-		exitsPos_[1] = { -80, 0 };
 		break;
 	case 180:
 		exits[0] = { halfSize, 0 };   // 右
 		exits[1] = { 0, halfSize };   // 下
-
-		//直接当たり判定する用
-		exitsPos_[0] = { 80,0 };
-		exitsPos_[1] = { 0, -80 };
 		
 		break;
 	case 270:
 		exits[0] = { 0, halfSize };   // 下
 		exits[1] = { -halfSize, 0 };  // 左
 
-		//直接当たり判定する用
-		exitsPos_[0] = { 0,80 };
-		exitsPos_[1] = { 80, 0 };
+		break;
+	}
+}
+
+void BlockBase::UpdateStraightExits()
+{
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
+
+	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
+
+	switch (rotate_) {
+	case 0:
+		exits[0] = { -halfSize, 0 };	// 左
+		exits[1] = { halfSize, 0 };		// 右
+
+		break;
+	case 90:
+		exits[0] = { 0, -halfSize };  //上
+		exits[1] = {0, halfSize };	  // 下
+
+		break;
+	case 180:
+		exits[0] = { 0, -halfSize };  //上
+		exits[1] = { 0, halfSize };	  // 下
+
+		break;
+	case 270:
+		exits[0] = { 0, halfSize };   // 下
+		exits[1] = { -halfSize, 0 };  // 左
+
+		break;
+	}
+}
+
+void BlockBase::UpdatePlusExits()
+{
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
+
+	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
+
+	switch (rotate_) {
+	case 0:
+		exits[0] = { -halfSize, 0 };  // 左
+		exits[1] = { 0, -halfSize };  // 上		
+		exits[2] = { halfSize, 0 };  // 右
+		exits[3] = { 0, halfSize };  // 下
+
+		break;
+	case 90:
+		exits[0] = { -halfSize, 0 };  // 左
+		exits[1] = { 0, -halfSize };  // 上		
+		exits[2] = { halfSize, 0 };  // 右
+		exits[3] = { 0, halfSize };  // 下
+
+		break;
+	case 180:
+		exits[0] = { -halfSize, 0 };  // 左
+		exits[1] = { 0, -halfSize };  // 上		
+		exits[2] = { halfSize, 0 };  // 右
+		exits[3] = { 0, halfSize };  // 下
+		break;
+	case 270:
+		exits[0] = { -halfSize, 0 };  // 左
+		exits[1] = { 0, -halfSize };  // 上		
+		exits[2] = { halfSize, 0 };  // 右
+		exits[3] = { 0, halfSize };  // 下
+
+		break;
+	}
+}
+
+void BlockBase::UpdateToExits()
+{
+	exits[0] = { 0, 0 };
+	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
+
+	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
+
+	switch (rotate_) {
+	case 0:
+		exits[0] = { -halfSize, 0 };	// 左
+		exits[1] = { halfSize, 0 };		// 右
+
+		break;
+	case 90:
+		exits[0] = { 0, -halfSize };  //上
+		exits[1] = { 0, halfSize };	  // 下
+
+		break;
+	case 180:
+		exits[0] = { 0, -halfSize };  //上
+		exits[1] = { 0, halfSize };	  // 下
+
+		break;
+	case 270:
+		exits[0] = { 0, halfSize };   // 下
+		exits[1] = { -halfSize, 0 };  // 左
+
 		break;
 	}
 }
@@ -215,11 +318,10 @@ void BlockBase::UpdateExitsOne()
 {
 	exits[0] = { 0, 0 };
 	exits[1] = { 0, 0 };
+	exits[2] = { 0, 0 };
+	exits[3] = { 0, 0 };
 
 	int halfSize = 320 / 2 * 0.5; // 160 * 0.5 = 80
-
-	goalExits[0] = { -halfSize, 0 };
-	startExits[0] = { halfSize, 0 };
 
 	switch (rotate_) {
 	case 0:

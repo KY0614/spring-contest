@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\Object\Block\PlusBlock.cpp" />
     <ClCompile Include="Src\Scene\HardGameScene.cpp" />
     <ClCompile Include="Src\Scene\NormalGameScene.cpp" />
     <ClCompile Include="Src\Scene\EasyGameScene.cpp" />
@@ -43,6 +44,7 @@
     <ClCompile Include="Src\Object\Time\Timer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\Object\Block\PlusBlock.h" />
     <ClInclude Include="Src\Scene\HardGameScene.h" />
     <ClInclude Include="Src\Scene\NormalGameScene.h" />
     <ClInclude Include="Src\Scene\EasyGameScene.h" />
