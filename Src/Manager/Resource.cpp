@@ -78,6 +78,10 @@ void Resource::Load(void)
 		handleId_ = LoadEffekseerEffect(path_.c_str());
 		break;
 
+	case Resource::TYPE::SOUND:
+		// ƒTƒEƒ“ƒh
+		handleId_ = LoadSoundMem(path_.c_str());
+		break;
 	}
 
 }
@@ -100,7 +104,7 @@ void Resource::Release(void)
 		}
 		delete[] handleIds_;
 	}
-		break;
+	break;
 
 	case Resource::TYPE::MODEL:
 	{
@@ -111,13 +115,16 @@ void Resource::Release(void)
 			MV1DeleteModel(id);
 		}
 	}
-		break;
+	break;
 
 	case Resource::TYPE::EFFEKSEER:
 
 		DeleteEffekseerEffect(handleId_);
 		break;
 
+	case Resource::TYPE::SOUND:
+		DeleteSoundMem(handleId_);
+		break;
 	}
 
 }

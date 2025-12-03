@@ -6,6 +6,7 @@ class SceneBase
 
 public:
 
+	
 	// コンストラクタ
 	SceneBase(void);
 
@@ -22,5 +23,10 @@ public:
 	virtual void Draw(void) = 0;
 
 protected:
+
+	static constexpr int VOLUME_MAX = 255;
+
+
+	int bgm_;
 
 };

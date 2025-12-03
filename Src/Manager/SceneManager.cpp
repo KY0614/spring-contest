@@ -1,15 +1,17 @@
 #include <chrono>
 #include <DxLib.h>
 #include <EffekseerForDXLib.h>
+#include "ResourceManager.h"
+#include "InputManager.h"
+#include "SoundManager.h"
+#include "../Application.h"
 #include "../Common/Fader.h"
 #include "../Scene/TitleScene.h"
-#include "../Scene/SelectScene.h"
 #include "../Scene/GameScene.h"
-#include "../Scene/EasyGameScene.h"
-#include "../Scene/NormalGameScene.h"
-#include "../Scene/HardGameScene.h"
-#include "../Scene/GameClearScene.h"
-#include "ResourceManager.h"
+#include "../Scene/ClearScene.h"
+#include "../Scene/GameOvera.h"
+#include "../Object/Timer/Timer.h"
+
 #include "SceneManager.h"
 
 SceneManager* SceneManager::instance_ = nullptr;
@@ -34,20 +36,31 @@ void SceneManager::Init(void)
 	sceneId_ = SCENE_ID::TITLE;
 	waitSceneId_ = SCENE_ID::NONE;
 
-
+	
+	// フェード機能の初期化
 	fader_ = std::make_unique<Fader>();
+
+	// タイマー機能の初期化
+	timer_ = new Timer();
+
+	//Init
+	timer_->Init();
 	fader_->Init();
 
+	delayCount_ = DELAY_MAX;
 	isSceneChanging_ = false;
+	stateFlag_ = false;
 
 	// デルタタイム
 	preTime_ = std::chrono::system_clock::now();
+
+	manewSerect_ = MANEW_SERECT::TITLE;
 
 	// 3D用の設定
 	Init3D();
 
 	// 初期シーンの設定
-	DoChangeScene(SCENE_ID::TITLE);
+	DoChangeScene(SCENE_ID::CLEAR);
 
 }
 
@@ -83,6 +96,100 @@ void SceneManager::Init3D(void)
 void SceneManager::Update(void)
 {
 
+	// 入力マネージャのインスタンスを取得
+	InputManager& ins = InputManager::GetInstance();
+	Application& app = Application::GetInstance();
+
+	if (ins.IsTrgDown(KEY_INPUT_ESCAPE) || ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::START))
+	{
+		timer_->Stop();
+		manew_ = true;
+
+	}
+	if (manew_ == true)
+	{
+		delayCount_++;
+
+		if(delayCount_ >= DELAY_MAX)
+		{
+			delayCount_ = DELAY_MAX;
+		}
+		InputManager& ins = InputManager::GetInstance();
+		// 上移動
+		isUp_ = (ins.IsNew(KEY_INPUT_W));
+		isUpStick_ = (ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY < 0);
+		// 下移動
+		isDown_ = (ins.IsNew(KEY_INPUT_S));
+		isDownStick_ = (ins.GetJPadInputState(InputManager::JOYPAD_NO::PAD1).AKeyLY > 0);
+		//セレクト操作
+		if (delayCount_ >= DELAY_MAX)
+		{
+
+			if (isUp_ || isUpStick_)
+			{
+				if (manewSerect_ == MANEW_SERECT::GAME_END)
+				{
+					manewSerect_ = MANEW_SERECT::EXIT;
+				}
+				else
+				{
+					manewSerect_ = static_cast<MANEW_SERECT>(static_cast<int>(manewSerect_) - 1);
+				}
+				stateFlag_ = true;
+				delayCount_ = 0;
+			}
+			else if (isDown_ || isDownStick_)
+			{
+				if (manewSerect_ == MANEW_SERECT::EXIT)
+				{
+					manewSerect_ = MANEW_SERECT::GAME_END;
+				}
+				else
+				{
+					manewSerect_ = static_cast<MANEW_SERECT>(static_cast<int>(manewSerect_) + 1);
+				}
+				stateFlag_ = true;
+				delayCount_ = 0;
+			}
+			if (!isUp_ && !isDown_)
+			{
+				stateFlag_ = false;
+				delayCount_ = 0;
+			}
+
+		}
+
+
+
+
+
+		/*count_++;
+		if (ins.IsTrgDown(KEY_INPUT_RETURN))
+		{
+			app.SetExit(true);
+			count_ = 0;
+		}
+		if (sceneId_ != SCENE_ID::TITLE)
+		{
+			if (ins.IsTrgDown(KEY_INPUT_SPACE))
+			{
+				InitSoundMem();
+				DoChangeScene(SCENE_ID::TITLE);
+				manew_ = false;
+			}
+		}
+		if (count_ >= 2)
+		{
+			if (ins.IsTrgDown(KEY_INPUT_ESCAPE))
+			{
+				manew_ = false;
+				count_ = 0;
+			}
+		}*/
+		State();
+
+	}
+
 	if (scene_ == nullptr)
 	{
 		return;
@@ -101,13 +208,26 @@ void SceneManager::Update(void)
 	}
 	else
 	{
-		scene_->Update();
+		if (!manew_)
+		{
+			scene_->Update();
+			timer_->Update();
+		}
 	}
 
 }
 
 void SceneManager::Draw(void)
 {
+
+	int EXIT;
+	EXIT = strlen("戻る");
+	int TITLE;
+	TITLE = strlen("タイトルへ行く");
+	int GAME_END;
+	GAME_END = strlen("ゲームを終了する");
+	int select;
+	select = strlen("メニュー");
 	
 	// 描画先グラフィック領域の指定
 	// (３Ｄ描画で使用するカメラの設定などがリセットされる)
@@ -115,6 +235,7 @@ void SceneManager::Draw(void)
 
 	// 画面を初期化
 	ClearDrawScreen();
+	
 
 	// Effekseerにより再生中のエフェクトを更新する。
 	UpdateEffekseer3D();
@@ -122,11 +243,44 @@ void SceneManager::Draw(void)
 	// 描画
 	scene_->Draw();
 
+	if (sceneId_ != SCENE_ID::TITLE)
+	{
+		timer_->Draw();
+	}
+
 	// Effekseerにより再生中のエフェクトを描画する。
 	DrawEffekseer3D();
 	
 	// 暗転・明転
 	fader_->Draw();
+	if (manew_ == true)
+	{
+		SetDrawBlendMode(DX_BLENDMODE_ALPHA, 255 / 1.1);
+		DrawBox(0, 0, Application::SCREEN_SIZE_X, Application::SCREEN_SIZE_Y, 0x000000, true);
+		SetDrawBlendMode(DX_BLENDMODE_NOBLEND, 0);
+		SetFontSize(96);
+		DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("メニュー", select)) / 2, 80, "メニュー", 0xffffff);
+		if (manewSerect_ == MANEW_SERECT::GAME_END)
+		{
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("ゲームを終了する", GAME_END)) / 2, Application::SCREEN_SIZE_Y / 2 - 128, "ゲームを終了する", 0xFFFFFF);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("タイトルへ行く", TITLE)) / 2, Application::SCREEN_SIZE_Y / 2 + 40, "タイトルへ行く", 0x888888);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("戻る", EXIT)) / 2, Application::SCREEN_SIZE_Y / 2 + 200, "戻る", 0x888888);
+		}
+		if (manewSerect_ == MANEW_SERECT::TITLE)
+		{
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("ゲームを終了する", GAME_END)) / 2, Application::SCREEN_SIZE_Y / 2 - 128, "ゲームを終了する", 0x888888);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("タイトルへ行く", TITLE)) / 2, Application::SCREEN_SIZE_Y / 2 + 40, "タイトルへ行く", 0xFFFFFF);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("戻る", EXIT)) / 2, Application::SCREEN_SIZE_Y / 2+ 200, "戻る", 0x888888);
+		}
+		if (manewSerect_ == MANEW_SERECT::EXIT)
+		{
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("ゲームを終了する", GAME_END)) / 2, Application::SCREEN_SIZE_Y / 2 - 128, "ゲームを終了する", 0x888888);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("タイトルへ行く", TITLE)) / 2, Application::SCREEN_SIZE_Y / 2 + 40, "タイトルへ行く", 0x888888);
+			DrawString((Application::SCREEN_SIZE_X - GetDrawStringWidth("戻る", EXIT)) / 2, Application::SCREEN_SIZE_Y / 2 + 200, "戻る", 0xffffff);
+		}
+		SetFontSize(16);
+		
+	}
 
 }
 
@@ -142,7 +296,7 @@ void SceneManager::ChangeScene(SCENE_ID nextId)
 	// フェード処理が終わってからシーンを変える場合もあるため、
 	// 遷移先シーンをメンバ変数に保持
 	waitSceneId_ = nextId;
-
+	SoundManager::GetInstance().StopBGM();
 	// フェードアウト(暗転)を開始する
 	fader_->SetFade(Fader::STATE::FADE_OUT);
 	isSceneChanging_ = true;
@@ -160,10 +314,31 @@ float SceneManager::GetDeltaTime(void) const
 	return deltaTime_;
 }
 
-std::weak_ptr<Camera> SceneManager::GetCamera(void) const
+void SceneManager::State(void)
 {
-	return camera_;
+	InputManager& ins = InputManager::GetInstance();
+	if (!stateFlag_ && ins.IsTrgDown(KEY_INPUT_SPACE)|| !stateFlag_&& ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::DOWN))
+	{
+
+		if (manewSerect_ == MANEW_SERECT::GAME_END)
+		{
+			Application& app = Application::GetInstance();
+			app.SetExit(true);
+		}
+		if (manewSerect_ == MANEW_SERECT::TITLE)
+		{
+			
+			SceneManager::GetInstance().ChangeScene(SceneManager::SCENE_ID::TITLE);
+			manew_ = false;
+		}
+		if (manewSerect_ == MANEW_SERECT::EXIT)
+		{
+			timer_->ReStart();
+			manew_ = false;
+		}
+	}
 }
+
 
 SceneManager::SceneManager(void)
 {
@@ -179,7 +354,7 @@ SceneManager::SceneManager(void)
 	// デルタタイム
 	deltaTime_ = 1.0f / 60.0f;
 
-	camera_ = nullptr;
+	
 
 }
 
@@ -208,24 +383,21 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 	{
 	case SCENE_ID::TITLE:
 		scene_ = std::make_unique<TitleScene>();
-		break;	
-	case SCENE_ID::SELECT:
-		scene_ = std::make_unique<SelectScene>();
+		timer_->Reset();
 		break;
 	case SCENE_ID::GAME:
-		scene_ = std::make_unique<GameScene>();
+		scene_ = std::make_unique<GameScene>(timer_);
+		timer_->Start(60.0f);
 		break;
-	case SCENE_ID::EASY:
-		scene_ = std::make_unique<EasyGameScene>();
+	case SCENE_ID::CLEAR:
+		scene_ = std::make_unique<ClearScene>(timer_);
+		timer_->Reset();
+		timer_->Start(30.0f);
 		break;
-	case SCENE_ID::NORMAL:
-		scene_ = std::make_unique<NormalGameScene>();
-		break;
-	case SCENE_ID::HARD:
-		scene_ = std::make_unique<HardGameScene>();
-		break;
-	case SCENE_ID::GAMECLEAR:
-		scene_ = std::make_unique<GameClearScene>();
+	case SCENE_ID::GAMEOVER:
+		scene_ = std::make_unique<GameOvera>(timer_);
+		timer_->Reset();
+		timer_->Start(30.0f);
 		break;
 	}
 

@@ -14,7 +14,8 @@ public:
 		IMG,
 		IMGS,
 		MODEL,
-		EFFEKSEER
+		EFFEKSEER,
+		SOUND,
 	};
 
 	// コンストラクタ
@@ -23,6 +24,8 @@ public:
 	Resource(TYPE type, const std::string& path);
 	// コンストラクタ(IMGS用)
 	Resource(TYPE type, const std::string& path, int numX, int numY, int sizeX, int sizeY);
+
+
 
 	// デストラクタ
 	~Resource(void);

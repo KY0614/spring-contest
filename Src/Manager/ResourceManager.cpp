@@ -28,27 +28,61 @@ void ResourceManager::Init(void)
 	static std::string PATH_IMG = Application::PATH_IMAGE;
 	static std::string PATH_MDL = Application::PATH_MODEL;
 	static std::string PATH_EFF = Application::PATH_EFFECT;
+	static std::string PATH_SND = Application::PATH_SOUND;
 
 	std::unique_ptr<Resource> res;
 
-	// タイトル画像
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Title.png");
-	resourcesMap_.emplace(SRC::TITLE, std::move(res));
-	//タイトルレンチ
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "TitleR.png");
-	resourcesMap_.emplace(SRC::TITLER, std::move(res));
-	// セレクト画像
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "haikei.png");
-	resourcesMap_.emplace(SRC::SELECT, std::move(res));
-
-	//ブロック	
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "LineBlock.png");
-	resourcesMap_.emplace(SRC::BLOCK,std::move(res));
-
-	// プレイヤー画像
-	res = std::make_unique<RES>(RES_T::IMG, PATH_IMG + "Player.png");
+	//モデル
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Player/無題.mv1");
 	resourcesMap_.emplace(SRC::PLAYER, std::move(res));
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/minigann.mv1");
+	resourcesMap_.emplace(SRC::ENEMYM, std::move(res));
 
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/usi.mv1");
+	resourcesMap_.emplace(SRC::ENEMYU, std::move(res));
+
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Enemy/ranntya.mv1");
+	resourcesMap_.emplace(SRC::ENEMYR, std::move(res));
+
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Stage/Stage.mv1");
+	resourcesMap_.emplace(SRC::STAGE, std::move(res));
+
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Stage/cora.mv1");
+	resourcesMap_.emplace(SRC::CLEARSTAGE, std::move(res));
+
+	//エフェクト
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Effect/Fireball.mv1");
+	resourcesMap_.emplace(SRC::EFFCT1, std::move(res));
+
+
+	//サウンド
+	//SE
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/回避.mp3");
+	resourcesMap_.emplace(SRC::AVOID, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/AS_846334_魔法音.mp3");
+	resourcesMap_.emplace(SRC::SLOU, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/剣で打ち合う3.mp3");
+	resourcesMap_.emplace(SRC::PARRY, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/盾で防御.mp3");
+	resourcesMap_.emplace(SRC::GUARD, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/刀で斬る2.mp3");
+	resourcesMap_.emplace(SRC::HIT, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/AS_778954_キン-モノラル（剣の当たる音）攻撃・防御_Audio Trimmer.mp3");
+	resourcesMap_.emplace(SRC::NODAME, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "SE/AS_221787_斬撃・刺す4・槍や剣_Audio Trimmer.mp3");
+	resourcesMap_.emplace(SRC::DAMAGE, std::move(res));
+
+	//BGM
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "Bgm/Title.mp3");
+	resourcesMap_.emplace(SRC::TITLEBGM, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "Bgm/game.mp3");
+	resourcesMap_.emplace(SRC::GAMEBGM, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "Bgm/over.mp3");
+	resourcesMap_.emplace(SRC::GAMEOVERBGM, std::move(res));
+	res = std::make_unique<RES>(RES_T::SOUND, PATH_SND + "Bgm/clia.mp3");
+	resourcesMap_.emplace(SRC::CLEARBGM, std::move(res));
+
+	
 
 }
 
@@ -90,6 +124,7 @@ int ResourceManager::LoadModelDuplicate(SRC src)
 	int duId = MV1DuplicateModel(res.handleId_);
 	res.duplicateModelIds_.push_back(duId);
 
+	
 	return duId;
 }
 

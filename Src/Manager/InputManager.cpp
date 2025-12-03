@@ -27,14 +27,19 @@ void InputManager::Init(void)
 	// ゲームで使用したいキーを、
 	// 事前にここで登録しておいてください
 	InputManager::GetInstance().Add(KEY_INPUT_SPACE);
+	InputManager::GetInstance().Add(KEY_INPUT_RETURN);
+	InputManager::GetInstance().Add(KEY_INPUT_ESCAPE);
 	InputManager::GetInstance().Add(KEY_INPUT_N);
+	InputManager::GetInstance().Add(KEY_INPUT_K);
 	InputManager::GetInstance().Add(KEY_INPUT_Z);
 	InputManager::GetInstance().Add(KEY_INPUT_W);
 	InputManager::GetInstance().Add(KEY_INPUT_A);
 	InputManager::GetInstance().Add(KEY_INPUT_S);
 	InputManager::GetInstance().Add(KEY_INPUT_D);
 	InputManager::GetInstance().Add(KEY_INPUT_R);
-
+	InputManager::GetInstance().Add(KEY_INPUT_LSHIFT);
+	InputManager::GetInstance().Add(KEY_INPUT_RIGHT);
+	InputManager::GetInstance().Add(KEY_INPUT_LEFT);
 
 
 	InputManager::MouseInfo info;
@@ -278,6 +283,18 @@ InputManager::JOYPAD_IN_STATE InputManager::GetJPadInputState(JOYPAD_NO no)
 		idx = static_cast<int>(JOYPAD_BTN::DOWN);
 		ret.ButtonsNew[idx] = d.Buttons[0];// A
 
+		idx = static_cast<int>(JOYPAD_BTN::LB);
+		ret.ButtonsNew[idx] = d.Buttons[4];// LB
+
+		idx = static_cast<int>(JOYPAD_BTN::RB);
+		ret.ButtonsNew[idx] = d.Buttons[5];// RB
+
+		idx = static_cast<int>(JOYPAD_BTN::BACK);
+		ret.ButtonsNew[idx] = d.Buttons[6];// BACK
+
+		idx = static_cast<int>(JOYPAD_BTN::START);
+		ret.ButtonsNew[idx] = d.Buttons[7];// START
+
 		idx = static_cast<int>(JOYPAD_BTN::R_TRIGGER);
 		ret.ButtonsNew[idx] = x.RightTrigger;// R_TRIGGER
 
@@ -358,3 +375,31 @@ bool InputManager::IsPadBtnTrgUp(JOYPAD_NO no, JOYPAD_BTN btn) const
 }
 
 
+VECTOR InputManager::GetDirectionXZAKey(int aKeyX, int aKeyY)
+{
+	VECTOR ret = { 0.0f, 0.0f, 0.0f };
+	// スティックの個々の入力値は、
+	// -1000.0f ～ 1000.0f の範囲で返ってくるが、
+	// X:1000.0f、Y:1000.0fになることは無い(1000と500くらいが最大)
+	// スティックの入力値を -1.0 ～ 1.0 に正規化
+	float dirX = static_cast<float>(aKeyX) / AKEY_VAL_MAX;
+	float dirZ = static_cast<float>(aKeyY) / AKEY_VAL_MAX;
+	// ピタゴラスの定理でニュートラル状態からの長さベクトルにする
+	// ( 円形のデッドゾーンになる )
+	// 平方根により、おおよその最大値が1.0となる
+	float len = sqrtf(dirX * dirX + dirZ * dirZ);
+	if (len < THRESHOLD)
+	{
+		// (0.0f, 0.0f, 0.0f)
+		return ret;
+	}
+	// デッドゾーン境界からに再スケーリング(可変デッドゾーン)
+	// ( しきい値 0.35 の場合は、 0.0 ～ 0.65 / 0.65 になる )
+	float scale = (len - THRESHOLD) / (1.0f - THRESHOLD);
+	dirX = (dirX / len) * scale;
+	dirZ = (dirZ / len) * scale;
+	// Zは前に倒すとマイナス値が返ってくるので反転
+	ret = VNorm({ dirX, 0.0f, -dirZ });
+	return ret;
+
+}

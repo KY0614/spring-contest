@@ -3,17 +3,24 @@
 #include "../Common/Vector2.h"
 #include <vector>
 
-
+class EnemyManager;
+class Collision;
 class Player;
-class BlockBase;
+class Camera;
+class Grid;
+class Timer;
+class Stage;
 
 class GameScene : public SceneBase
 {
 
 public:
-	
+	static constexpr int MAX_COUNT = 5;
+	static constexpr float MAX_SLOW_TIME = 600.0f;
+	static constexpr int MAX_SLOW_COUNT = 3;
+
 	// コンストラクタ
-	GameScene(void);
+	GameScene(Timer*timer);
 
 	// デストラクタ
 	~GameScene(void);
@@ -22,36 +29,36 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
+	void SetIsSlow(bool isSlow);
+	bool GetIsSlow(void);
+
 private:
+
+
+	//カメラ
+	Camera* camera_;
+
+	//グリッド線
+	Grid* grid_;
+
+	//プレイヤー
 	Player* player_;
 
-	std::vector<BlockBase*> blocks;
-	BlockBase* selectBlock;
-	BlockBase* startBlock;
-	BlockBase* goalBlock;
-	int gridSize_;
-	int startX_;
-	int startY_;
+	//敵マネージャー
+	EnemyManager* enemyManager_;
 
-	int img_;
+	//当たり判定
+	Collision* collision_;
 
-	int bgmHandle_;					//bgm
-	int seTouch_;					//ブロック触ったとき
-	int seRotate_;					//回転
+	//タイマー
+	Timer* timer_;
 
-	Vector2 highlightPos_;			//ハイライト座標
-	BlockBase* highlightBlock;		//ハイライトをつけるブロック
-	BlockBase* preHighlightBlock;	//
+	//ステージ
+	Stage* stage_;
 
-	void InitBlock(void);
-	void AddBlock(BlockBase* block);
-	bool BlocksConnected(const BlockBase* block1, const BlockBase* block2) const;
-	bool CheckConnections(const BlockBase* block) const;
-	void BlockProcess(Vector2 pos);
+	int count_;
 
-	void HighlightUpdate();
-	void HighlightDraw();
-
-	void InitSoundEffect();
-	void PlaySoundEffect();
+	float slowTime_;
+	int slowCount_;
+	bool isSlow_;
 };
