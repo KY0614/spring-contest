@@ -78,9 +78,9 @@ void ClearScene::Draw(void)
 {
 	MV1DrawModel(modelid_);
 	SetFontSize(150);
-	DrawString(600, 130, "Gama Clear", 0xffffff);
+	DrawString(600, 130, "Game Clear", 0xffffff);
 	SetFontSize(96);
-	DrawString(250, 800, "スベース(Aボタン)でゲームスタート", 0xffffff);
+	DrawString(250, 800, "スペース(Aボタン)でスタート画面へ", 0xffffff);
 	SetFontSize(16);
 }
 

@@ -150,8 +150,18 @@ void Camera::SetBeforeDrawFollow(void)
 	VECTOR targetLocalRotPos = VTransform(FOLLOW_TARGET_LOCAL_POS, mat);
 	targetPos_ = VAdd(followPos, targetLocalRotPos);
 	// カメラの移動
+	
 	// 相対座標を回転させて、回転後の相対座標を取得する
-	VECTOR cameraLocalRotPos = VTransform(FOLLOW_CAMERA_LOCAL_POS, mat);
+	VECTOR cameraLocalRotPos;
+	if (player_->GetSlow()||player_->GetStop())
+	{
+		cameraLocalRotPos = VTransform(FOLLOW_CAMERA_LOCAL_POS_UP, mat);
+	}
+	else
+	{
+		cameraLocalRotPos = VTransform(FOLLOW_CAMERA_LOCAL_POS, mat);
+	}
+	
 	// 相対座標からワールド座標に直して、カメラ座標とする
 	pos_ = VAdd(followPos, cameraLocalRotPos);
 

@@ -9,6 +9,18 @@ class ShotBase;
 class EnemyBase
 {
 public:
+
+
+	static constexpr int ATTAC_DIR_M = 40;
+	static constexpr int ATTAC_DIR_R = 80;
+
+	static constexpr VECTOR M_SCL = { 0.2f,0.2f, 0.2f };
+	static constexpr VECTOR R_SCL = { 0.4f,0.4f, 0.4f };
+
+	static constexpr float M_RAD = 30.0f;
+	static constexpr float R_RAD = 30.0f;
+
+
 	// エネミー種別
 	enum class TYPE
 	{
@@ -36,6 +48,8 @@ public:
 		DEAD_REACT,
 		END,
 	};
+	
+
 
 
 	// モデルの大きさ
@@ -74,6 +88,9 @@ private:
 	
 	bool isHit_;
 
+	int attackR_;
+	int attackM_;
+
 	// プレイヤーのポインタ
 	Player* player_;
 
@@ -106,6 +123,8 @@ public:
 
 	void ChangeState(STATE state);
 
+	
+
 	VECTOR GetPos(void);
 	void SetPos(VECTOR pos);
 
@@ -122,7 +141,7 @@ public:
 
 	void Damage(int damage);
 
-	
+	void ShotCret(VECTOR pos, VECTOR scl,float rad);
 
 	bool IsCollisionState(void);
 

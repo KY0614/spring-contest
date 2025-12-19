@@ -10,12 +10,19 @@ public:
 		ROCK
 	};
 
+	//誰の物か
+	enum class ATTACK_HIT
+	{
+		ENEMY,
+		PLAYER,
+	};
+
 	// コンストラクタ(元となるモデルのハンドルID)
 	ShotBase(TYPE type, int baseModelId);
 	// デストラクタ
 	virtual ~ShotBase(void);
 	// 弾の生成(表示開始座標、弾の進行方向)
-	virtual void CreateShot(VECTOR pos, VECTOR dir);
+	virtual void CreateShot(VECTOR pos, VECTOR dir,VECTOR scl,float rad);
 	// 更新ステップ
 	virtual void Update(void);
 	// 描画
@@ -33,14 +40,19 @@ public:
 	// 弾の種別
 	TYPE GetType(void);
 
+	ATTACK_HIT GetAttack(void);
 
 	float GetRadius(void);
 
 	void ReDir(void);
 
+	void ChangeAttack(ATTACK_HIT attack);
+
 protected:
 	// 弾の種別
 	TYPE type_;
+
+	ATTACK_HIT attack_;
 	// 元となる弾のモデルID
 	int baseModelId_;
 	// 弾のモデルID

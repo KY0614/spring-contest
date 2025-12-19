@@ -50,6 +50,10 @@ void ResourceManager::Init(void)
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Stage/cora.mv1");
 	resourcesMap_.emplace(SRC::CLEARSTAGE, std::move(res));
 
+	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Stage/gameovera.mv1");
+	resourcesMap_.emplace(SRC::GAMEOVERA, std::move(res));
+
+
 	//エフェクト
 	res = std::make_unique<RES>(RES_T::MODEL, PATH_MDL + "Effect/Fireball.mv1");
 	resourcesMap_.emplace(SRC::EFFCT1, std::move(res));

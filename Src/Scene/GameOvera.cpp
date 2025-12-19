@@ -2,6 +2,7 @@
 #include <DxLib.h>
 #include "../Application.h"
 #include "../Utility/AsoUtility.h"
+#include "../Utility/MatrixUtility.h"
 #include "../Manager/SceneManager.h"
 #include "../Manager/InputManager.h"
 #include "../Manager/ResourceManager.h"
@@ -24,6 +25,13 @@ void GameOvera::Init(void)
 	ResourceManager& res = ResourceManager::GetInstance();
 	bgm_ = res.Load(ResourceManager::SRC::GAMEOVERBGM).handleId_;
 	
+	modelid_ = res.Load(ResourceManager::SRC::GAMEOVERA).handleId_;
+	pos_ = { Application::SCREEN_SIZE_X / 2, 400.0f, -400.0f };
+	localrot_ = { 0.0f,0.0f,0.0f };
+	rot_ = { 0.0f,0.0f,0.0f };
+
+	MV1SetPosition(modelid_, pos_);
+	MV1SetRotationMatrix(modelid_, MatrixUtility::Multiplication(localrot_, rot_));
 	
 	count_ = 0;
 	SoundManager::GetInstance().PlayBGM(bgm_, VOLUME_MAX);
@@ -32,6 +40,8 @@ void GameOvera::Init(void)
 
 void GameOvera::Update(void)
 {
+	rot_.y += AsoUtility::Deg2RadF(0.3f);
+	MV1SetRotationMatrix(modelid_, MatrixUtility::Multiplication(localrot_, rot_));
 
 	count_++;
 	// シーン遷移
@@ -54,7 +64,11 @@ void GameOvera::Update(void)
 
 void GameOvera::Draw(void)
 {
-	DrawString(0, 100, "GameOvera", 0x000000);
-	DrawString(0, 130, "スベース(Aボタン)でリスタート", 0x000000);
+	MV1DrawModel(modelid_);
+	SetFontSize(150);
+	DrawString(600, 130, "Game Overa", 0x000000);
+	SetFontSize(96);
+	DrawString(250, 800, "スペース(Aボタン)でスタート画面へ", 0x000000);
+	SetFontSize(16);
 }
 

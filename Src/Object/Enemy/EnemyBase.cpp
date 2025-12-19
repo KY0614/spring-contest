@@ -47,6 +47,9 @@ void EnemyBase::Init(TYPE type, int baseModelId, int baseAttackEffectModelId, Pl
 
 	isHit_ = false;
 
+	attackR_ = 0;
+	attackM_ = 0;
+
 	//ƒpƒ‰ƒ[ƒ^Ý’è
 	SetParam();
 
@@ -257,6 +260,8 @@ void EnemyBase::ChangeState(STATE state)
 	}
 }
 
+
+
 VECTOR EnemyBase::GetPos(void)
 {
 	return pos_;
@@ -279,12 +284,12 @@ float EnemyBase::GetAttackRadius(void)
 
 float EnemyBase::GetRadius(void)
 {
-	return 0.0f;
+	return collisionRadius_;
 }
 
 bool EnemyBase::GetIsAlaive(void)
 {
-	return collisionRadius_;
+	return isAlive_;
 }
 
 void EnemyBase::SetIsAlive(bool is)
@@ -316,6 +321,19 @@ void EnemyBase::Damage(int damage)
 	{
 		ChangeState(STATE::HIT_REACT);
 	}
+}
+
+void EnemyBase::ShotCret(VECTOR pos,VECTOR scl,float rad)
+{
+	ShotBase* shot = GetValidShot();
+	// ’e‚ð¶¬
+
+	VECTOR localPos = pos;
+
+	VECTOR shotPos = VTransform(localPos, MatrixUtility::GetMatrixRotateXYZ(angles_));
+	shotPos_ = VAdd(pos_, shotPos);
+
+	shot->CreateShot(shotPos_, moveDir_,scl,rad);
 }
 
 bool EnemyBase::IsCollisionState(void)
@@ -382,6 +400,7 @@ ShotBase* EnemyBase::GetRockShot(void)
 
 void EnemyBase::SetParam(void)
 {
+	
 }
 
 void EnemyBase::ChangeStandby(void)
@@ -394,20 +413,7 @@ void EnemyBase::ChangeAttack(void)
 	animationController_->Play(static_cast<int>(ANIM_TYPE::ATTACK), false);
 	// UŒ‚ŠÔŠu—p‚ÌƒJƒEƒ“ƒ^‚ðƒŠƒZƒbƒg
 	cntAttack_ = 0;
-	// ’e‚ð¶¬
-	if (type_ == TYPE::ENEMYM|| type_ == TYPE::ENEMYR)
-	{
 
-		ShotBase* shot = GetValidShot();
-		// ’e‚ð¶¬
-
-		VECTOR localPos = { 0.0f,0.0f,-200.0f };
-
-		VECTOR shotPos = VTransform(localPos, MatrixUtility::GetMatrixRotateXYZ(angles_));
-		shotPos_ = VAdd(pos_, shotPos);
-
-		shot->CreateShot(shotPos_, moveDir_);
-	}
 }
 
 void EnemyBase::ChangeStan(void)
@@ -436,8 +442,35 @@ void EnemyBase::UpdateStandby(void)
 
 void EnemyBase::UpdateAttack(void)
 {
-	ChangeState(STATE::STANDBY);
+	LookPlayer();
+	attackM_++;
+	attackR_++;
+	if (animationController_->IsEnd())
+	{
+		ChangeState(STATE::STANDBY);
+	}
+	// ’e‚ð¶¬
+	if (type_ == TYPE::ENEMYM )
+	{
+		if (attackM_ >= ATTAC_DIR_M)
+		{
+			attackM_ = 0;
+			ShotCret({0.0f,50.0f,-200}, M_SCL, M_RAD);
+		}
+		
+	}
+	if (type_ == TYPE::ENEMYR)
+	{
+
+		if (attackR_ >= ATTAC_DIR_R)
+		{
+			attackR_ = 0;
+			ShotCret({ 0.0f,0.0f,-200 },R_SCL, R_RAD);
+		}
+
+	}
 }
+	
 
 void EnemyBase::UpdateStan(void)
 {
@@ -495,7 +528,9 @@ void EnemyBase::DrawAttack(void)
 {
 	// ƒ‚ƒfƒ‹‚Ì•`‰æ
 	MV1DrawModel(modelId_);
-	//DrawSphere3D(attackPos_, attackRadius_, 16, 0xff0000, 0xff0000, false);
+#ifdef _DEBUG
+	DrawSphere3D(attackPos_, attackRadius_, 16, 0xff0000, 0xff0000, false);
+#endif
 }
 
 void EnemyBase::DrawStan(void)

@@ -11,6 +11,9 @@ class Stage;
 class Collision
 {
 public:
+
+	static constexpr int RIBAS_DIR = 30;
+
 	Collision();
 	~Collision();
 	void Init(Player*player, EnemyManager* enemyManager,GameScene*game,Stage*satge);
@@ -31,6 +34,8 @@ private:
 	int noDamageSE_;
 	int DamageSE_;
 	int HitSE_;
+
+	int ribasDir_;
 
 };
 

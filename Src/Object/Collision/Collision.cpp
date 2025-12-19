@@ -34,10 +34,18 @@ void Collision::Init(Player* player, EnemyManager* enemyManager,GameScene*game,S
 	game_ = game;
 	stage_ = stage;
 
+	ribasDir_ = 0;
 }
 
 void Collision::Update(void)
 {
+	ribasDir_++;
+
+	if (ribasDir_ >= RIBAS_DIR)
+	{
+		ribasDir_ = RIBAS_DIR + 1;
+	}
+
 	if (!player_->IsCollisionState())
 	{
 		return;
@@ -45,41 +53,55 @@ void Collision::Update(void)
 
 
 	enemys_ = enemyManager_->GetEnemys();
+	enemys_ = enemyManager_->GetEnemys();
+
+	// 1. エネミー同士の重なり防止
+	for (size_t i = 0; i < enemys_.size(); ++i)
+	{
+		for (size_t j = i + 1; j < enemys_.size(); ++j)
+		{
+			if (!enemys_[i]->IsCollisionState() || !enemys_[j]->IsCollisionState()) continue;
+
+			VECTOR posA = enemys_[i]->GetPos();
+			VECTOR posB = enemys_[j]->GetPos();
+
+			// y軸を無視して押し出し
+			Puss(posA, enemys_[i]->GetRadius(), posB, enemys_[j]->GetRadius());
+
+			enemys_[i]->SetPos(posA);
+			enemys_[j]->SetPos(posB);
+		}
+	}
+
+	// 2. プレイヤーと全エネミーの重なり防止
 	for (EnemyBase* enemy : enemys_)
 	{
-		for (EnemyBase* enemy2 : enemys_)
-		{
-			if (enemy == enemy2)
-			{
-				continue;
-			}
-			VECTOR posA = enemy->GetPos();
-			VECTOR posB = enemy2->GetPos();
-			Puss(posA, enemy->GetRadius(), posB, enemy2->GetRadius());
-			enemy->SetPos(posA);
-			enemy2->SetPos(posB);
-		}
-	
-		
+		if (!enemy->IsCollisionState()) continue;
+
+		VECTOR ePos = enemy->GetPos();
+		VECTOR pPos = player_->GetPos();
+
+		// プレイヤーの半径は、状況に応じて適切なものを選択してください
+		Puss(ePos, enemy->GetRadius(), pPos, player_->GetCollisionRadiusGS());
+
+		enemy->SetPos(ePos);
+		player_->SetPos(pPos);
 		if (!enemy->IsCollisionState())
 		{
 			continue;
 		}
 
-		/*VECTOR tempPosA = enemy->GetPos();
-		VECTOR tempPosB = player_->GetPos();
-		Puss(tempPosA, enemy->GetRadius(), tempPosB, player_->GetCollisionRadiusH());
-		enemy->SetPos(tempPosA);
-		player_->SetPos(tempPosB);*/
+		
 		VECTOR posP= player_->GetPos();
 		VECTOR posS= stage_->GetPos();
 		StageStop(posP, posS, stage_->GetRadius());
 		
 
 
-
+		//エネミー攻撃とプレイヤー
 		if (enemy->GetState() == EnemyBase::STATE::ATTACK)
 		{
+			//ダメージを受けつかないとき
 			if (player_->GetState() == Player::STATE::GUARD || player_->GetState() == Player::STATE::AVOID || player_->GetState() == Player::STATE::PARRY)
 			{
 				if (HitSphere(enemy->GetAttackPos(), enemy->GetAttackRadius(), player_->GetPos(), player_->GetCollisionRadiusGS()))
@@ -96,7 +118,7 @@ void Collision::Update(void)
 					player_->HitGS(true);
 				}
 			}
-			else
+			else//ダメージを受け付けるとき
 			{
 
 				if (HitSphere(enemy->GetAttackPos(), enemy->GetAttackRadius(), player_->GetPos(), player_->GetCollisionRadiusH()))
@@ -107,68 +129,81 @@ void Collision::Update(void)
 
 			}
 		}
-		
+		//プレイヤー攻撃とエネミー
 		if (player_->GetState() == Player::STATE::ATTACK)
 		{
-
-
-			if (HitSphere(enemy->GetPos(), enemy->GetRadius(), player_->GetAttackPos(), player_->GetAttackRange()))
+			if (game_->GetIsSlow() == true || enemy->GetState() == EnemyBase::STATE::STAN)
 			{
-				if (game_->GetIsSlow() == true|| enemy->GetState() == EnemyBase::STATE::STAN)
+
+				if (HitSphere(enemy->GetPos(), enemy->GetRadius(), player_->GetAttackPos(), player_->GetAttackRange()))
 				{
+
 					auto& ins = SoundManager::GetInstance();
 					ins.PlaySE(HitSE_);
 					enemy->Damage(1);
-				}
-				else
-				{
 
 				}
 			}
+
 		}
 
 		shots_ = enemy->GetShot();
 		for (ShotBase* shot : shots_)
 		{
-			if (player_->GetState() == Player::STATE::GUARD || player_->GetState() == Player::STATE::AVOID || player_->GetState() == Player::STATE::PARRY)
+			if (shot->GetAttack() == ShotBase::ATTACK_HIT::ENEMY)
 			{
-				if (HitSphere(player_->GetPos(), player_->GetCollisionRadiusGS(), shot->GetPos(), shot->GetRadius()))
+				if (player_->GetState() == Player::STATE::GUARD || player_->GetState() == Player::STATE::AVOID || player_->GetState() == Player::STATE::PARRY)
 				{
-					if (shot->IsAlive())
+
+					//プレイヤーと弾
+					if (HitSphere(player_->GetPos(), player_->GetCollisionRadiusGS(), shot->GetPos(), shot->GetRadius()))
 					{
-						if (player_->GetState() == Player::STATE::PARRY)
+						if (shot->IsAlive())
 						{
-							shot->ReDir();
-							player_->HitGS(true);
+							if (player_->GetState() == Player::STATE::PARRY)//ダメージを受け付けないとき（弾反射
+							{
+								if (ribasDir_ >= RIBAS_DIR)
+								{
+									ribasDir_ = 0;
+									shot->ReDir();
+								}
+								player_->HitGS(true);
+							}
+							else//ダメージを受け付けないとき（弾消滅
+							{
+								shot->SetIsAlive(false);
+								player_->HitGS(true);
+							}
 						}
-						else
+					}
+
+				}
+				else
+				{
+					//ダメージを受け付ける
+					if (HitSphere(player_->GetPos(), player_->GetCollisionRadiusH(), shot->GetPos(), shot->GetRadius()))
+					{
+						if (shot->IsAlive())
 						{
+
 							shot->SetIsAlive(false);
-							player_->HitGS(true);
+							player_->HitH(true);
+
 						}
 					}
 				}
 			}
-			else
+			else if (shot->GetAttack() == ShotBase::ATTACK_HIT::PLAYER)
 			{
-				if (HitSphere(player_->GetPos(), player_->GetCollisionRadiusH(), shot->GetPos(), shot->GetRadius()))
+				if (HitSphere(enemy->GetPos(), enemy->GetRadius(), shot->GetPos(), shot->GetRadius()))
 				{
 					if (shot->IsAlive())
 					{
-
 						shot->SetIsAlive(false);
-						player_->HitH(true);
-
+						enemy->Damage(1);
+						// デバッグログを出すと確実です
+						// printf("Hit Enemy!\n"); 
 					}
-				}
-			}
-			if (HitSphere(enemy->GetPos(), enemy->GetRadius(), shot->GetPos(), shot->GetCollisionRadius()))
-			{
-				if (shot->IsAlive())
-				{
-
-					shot->SetIsAlive(false);
-					enemy->Damage(1);
 				}
 			}
 		}
@@ -198,63 +233,40 @@ bool Collision::HitSphere(VECTOR pos1, float radius1, VECTOR pos2, float radius2
 
 void Collision::Puss(VECTOR& pos1, float radius1, VECTOR& pos2, float radius2)
 {
-	VECTOR Hit;
-	Hit.x = pos1.x - pos2.x;
-	Hit.y = pos1.y - pos2.y;
-	Hit.z = pos1.z - pos2.z;
+	// xとzの差分だけを計算する（yを0にする）
+	VECTOR Hit = VSub(pos1, pos2);
+	Hit.y = 0.0f; // y軸の差分を無視
 
-	float dis_sq = Hit.x * Hit.x + Hit.y * Hit.y + Hit.z * Hit.z;
+	float dis_sq = Hit.x * Hit.x + Hit.z * Hit.z;
 	float sum_radii = radius1 + radius2;
 	float sum_radii_sq = sum_radii * sum_radii;
 
-	if (dis_sq < sum_radii_sq && dis_sq != 0.0f) // dis_sq が 0 のケースは別途処理
+	// 衝突判定（2D平面上での判定）
+	if (dis_sq < sum_radii_sq && dis_sq != 0.0f)
 	{
-		float dis = sqrt(dis_sq); // 実際の距離 d を計算
-		float overlap = sum_radii - dis; // めり込み量 O = R - d
+		float dis = sqrt(dis_sq);
+		float overlap = sum_radii - dis;
 
-		// 衝突方向の単位ベクトル (Normal) を計算
+		// 押し出し方向ベクトル（yは0）
 		VECTOR normal = VScale(Hit, 1.0f / dis);
 
-		// それぞれが移動すべき量 (めり込み量の半分)
+		// 移動量の計算（半分ずつ）
 		VECTOR move_amount = VScale(normal, overlap * 0.5f);
 
-		// pos1 は normal 方向に押し出し
-		pos1 = VAdd(pos1, move_amount);
-		// pos2 は normal と逆方向に押し出し
-		pos2 = VSub(pos2, move_amount);
+		// pos1, pos2 の x と z だけを更新する
+		pos1.x += move_amount.x;
+		pos1.z += move_amount.z;
+
+		pos2.x -= move_amount.x;
+		pos2.z -= move_amount.z;
 	}
-	// dis_sq が 0 の場合の処理（位置が完全に一致している場合）
 	else if (dis_sq == 0.0f)
 	{
-		// pos1 と pos2 を適当な方向に強制的に分離する
-		float overlap = sum_radii;
-		pos1.z += overlap * 0.5f;
-		pos2.z -= overlap * 0.5f;
-	}
-
-	float dis = Hit.x * Hit.x + Hit.y * Hit.y + Hit.z * Hit.z;
-	float radius = (radius1 + radius2);
-
-	
-
-	if (dis<(radius*radius))
-	{
-		float in = radius - dis;
-		if (dis == 0.0f)
-		{
-			pos1.z += in * 0.5f;
-			pos2.z -= in * 0.5f;
-			return;
-		}
-		VECTOR normal = VScale(Hit, 1.0f / dis);
-		VECTOR move1 = VScale(normal, in * 0.5f);
-		VECTOR move2 = VScale(normal, in * 0.5f);
-
-		pos1 = VAdd(pos1, move1);
-		pos2 = VSub(pos2, move2);
+		// 完全に重なっている場合は、x軸方向に少しずらす
+		pos1.x += sum_radii * 0.5f;
+		pos2.x -= sum_radii * 0.5f;
 	}
 }
-
 void Collision::StageStop(VECTOR pos1, VECTOR pos2, float radius2)
 {
 	pos1.y = 0.0f;

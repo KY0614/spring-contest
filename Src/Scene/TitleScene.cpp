@@ -186,7 +186,7 @@ void TitleScene::Draw(void)
 		SetFontSize(150);
 		DrawString(600, 130, "ヨケアク", 0xffffff);
 		SetFontSize(96);
-		DrawString(250, 800, "スベース(Aボタン)でゲームスタート", 0xffffff);
+		DrawString(250, 800, "スぺース(Aボタン)でゲームスタート", 0xffffff);
 		DrawString(350, 900, "ENTER(Bボタン)で操作方法", 0xffffff);
 		SetFontSize(16);
 	}

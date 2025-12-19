@@ -60,7 +60,7 @@ void SceneManager::Init(void)
 	Init3D();
 
 	// ‰ŠúƒV[ƒ“‚ÌÝ’è
-	DoChangeScene(SCENE_ID::CLEAR);
+	DoChangeScene(SCENE_ID::TITLE);
 
 }
 
@@ -334,6 +334,11 @@ void SceneManager::State(void)
 		if (manewSerect_ == MANEW_SERECT::EXIT)
 		{
 			timer_->ReStart();
+			if (sceneId_ == SCENE_ID::TITLE)
+			{
+				TitleScene* title = static_cast<TitleScene*>(scene_.get());
+				title->SetCount(0);
+			}
 			manew_ = false;
 		}
 	}
@@ -387,7 +392,7 @@ void SceneManager::DoChangeScene(SCENE_ID sceneId)
 		break;
 	case SCENE_ID::GAME:
 		scene_ = std::make_unique<GameScene>(timer_);
-		timer_->Start(60.0f);
+		timer_->Start(90.0f);
 		break;
 	case SCENE_ID::CLEAR:
 		scene_ = std::make_unique<ClearScene>(timer_);

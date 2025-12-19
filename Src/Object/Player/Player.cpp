@@ -63,6 +63,7 @@ void Player::Init(Camera* camera, GameScene* game)
 
 	attackCnt_ = 0.0f;
 
+	stopDir_ = 0;
 
 	// モデルの自己発光色設定
 	MV1SetMaterialEmiColor(model_, 0, COLOR_EMI_DEFAULT);
@@ -101,7 +102,12 @@ void Player::ChangeDead()
 // アプデ
 void Player::Update()
 {
-	
+	stopDir_++;
+	if (stopDir_ >= MAX_STOP_DIR)
+	{
+		stopDir_ = MAX_STOP_DIR + ONE;
+	}
+
 	switch (state_)
 	{
 	case Player::STATE::STANDBY:
@@ -537,7 +543,13 @@ void Player::HitGS(bool is)
 			}
 			ins.PlaySE(slouSE_);
 			sp_ -= LOST_SP;
-			game_->SetIsSlow(true);
+			if (!game_->GetIsSlow())
+			{
+				game_->SetIsSlow(true);
+				
+			}
+			
+			
 			break;
 
 		case Player::STATE::GUARD:
@@ -551,6 +563,12 @@ void Player::HitGS(bool is)
 			if (gp_ > MAX_GP)
 			{
 				gp_ = MAX_GP;
+			}
+			if (stopDir_ >= MAX_STOP_DIR)
+			{
+				stopDir_ = 0;
+				game_->SetIsStop(true);
+				
 			}
 			break;
 		}
@@ -648,4 +666,14 @@ float Player::GetCollisionRadiusH()
 float Player::GetAttackRange()
 {
 	return ATTACK_RADIUS;
+}
+
+bool Player::GetSlow()
+{
+	return game_->GetIsSlowP();
+}
+
+bool Player::GetStop()
+{
+	return game_->GetIsStop();
 }

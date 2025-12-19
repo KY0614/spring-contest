@@ -23,6 +23,10 @@ public:
 
 private:
 	int count_;
+	int modelid_;
+	VECTOR pos_;
+	VECTOR rot_;
+	VECTOR localrot_;
 	Timer* timer_;
 
 };

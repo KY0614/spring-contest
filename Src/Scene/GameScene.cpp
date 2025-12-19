@@ -64,6 +64,10 @@ void GameScene::Init(void)
 	slowTime_ = 0.0f;
 	slowCount_ = 0;
 	isSlow_ = false;
+
+	stopTime_ = 0.0f;
+	isStop_ = false;
+
 	SoundManager::GetInstance().PlayBGM(bgm_, VOLUME_MAX);
 }
 
@@ -73,35 +77,58 @@ void GameScene::Update(void)
 
 	count_++;
 	InputManager& ins = InputManager::GetInstance();
-	player_->Update();
+	
 	stage_->Update();
-	if (isSlow_)
+
+	if (isStop_)
 	{
-		slowTime_+= 1.0f;
-		if (slowTime_ <= MAX_SLOW_TIME)
+		stopTime_ += 1.0f;
+		if (stopTime_ >= MAX_STOP_TIME)
 		{
-			slowCount_++;
-		}
-		if (slowCount_ >= MAX_SLOW_COUNT)
-		{
-			
-			enemyManager_->Update();
-			slowCount_ = 0;
-		}
-		if (slowTime_ >= MAX_SLOW_TIME)
-		{
-			isSlow_ = false;
-			slowTime_ = 0.0f;
-			slowCount_ = 0;
+			stopTime_ = 0.0f;
+			isStop_ = false;
 		}
 	}
 	else
 	{
-		enemyManager_->Update();
+		if (isSlow_)
+		{
+			slowTime_ += 1.0f;
+			if (slowTime_ <= MAX_SLOW_TIME)
+			{
+				slowCount_++;
+			}
+			if (slowCount_ >= MAX_SLOW_COUNT)
+			{
+				if (isSlowP_)
+				{
+					player_->Update();
+				}
+
+				enemyManager_->Update();
+				slowCount_ = 0;
+			}
+			if (slowTime_ >= MAX_SLOW_TIME)
+			{
+				isSlow_ = false;
+				slowTime_ = 0.0f;
+				slowCount_ = 0;
+			}
+			if (slowTime_ >= MAX_SLOW_TIME_P*2)
+			{
+				isSlowP_ = false;
+			}
+		}
+		else
+		{
+			enemyManager_->Update();
+		}
+		if (!isSlowP_)
+		{
+			player_->Update();
+		}
+
 	}
-	
-	
-	
 	collision_->Update();
 	// ÉVÅ[ÉìëJà⁄
 	if (ins.IsTrgDown(KEY_INPUT_R)||ins.IsPadBtnTrgDown(InputManager::JOYPAD_NO::PAD1, InputManager::JOYPAD_BTN::BACK))
@@ -149,11 +176,27 @@ void GameScene::Draw(void)
 void GameScene::SetIsSlow(bool isSlow)
 {
 	isSlow_ = isSlow;
+	isSlowP_ = isSlow;
 }
 
 bool GameScene::GetIsSlow(void)
 {
 	return isSlow_;
+}
+
+bool GameScene::GetIsSlowP(void)
+{
+	return isSlowP_;
+}
+
+bool GameScene::GetIsStop(void)
+{
+	return isStop_;
+}
+
+void GameScene::SetIsStop(bool isStop)
+{
+	isStop_ = isStop;
 }
 
 

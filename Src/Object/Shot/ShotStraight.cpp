@@ -12,7 +12,7 @@ ShotStraight::~ShotStraight(void)
 void ShotStraight::SetParam(void)
 {
 
-	scales_ = { 0.4f,0.4f,0.4f };
+	
 
 	//‘¬“x
 	speed_ = 8.0f;
@@ -22,7 +22,7 @@ void ShotStraight::SetParam(void)
 
 	cntAlive_ = 300;
 
-	collisionRadius_ = 30.0f;
+	
 
 
 }

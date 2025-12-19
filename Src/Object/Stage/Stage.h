@@ -18,6 +18,7 @@ public:
 	VECTOR GetPos() { return pos_; }
 	float GetRadius() { return radius_; }
 
+
 private:
 	
 	int model_;

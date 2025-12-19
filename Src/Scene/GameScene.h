@@ -17,6 +17,8 @@ class GameScene : public SceneBase
 public:
 	static constexpr int MAX_COUNT = 5;
 	static constexpr float MAX_SLOW_TIME = 600.0f;
+	static constexpr float MAX_SLOW_TIME_P = 30.0f;
+	static constexpr float MAX_STOP_TIME = 15.0f;
 	static constexpr int MAX_SLOW_COUNT = 3;
 
 	// コンストラクタ
@@ -31,6 +33,11 @@ public:
 
 	void SetIsSlow(bool isSlow);
 	bool GetIsSlow(void);
+
+	bool GetIsSlowP(void);
+
+	bool GetIsStop(void);
+	void SetIsStop(bool isStop);
 
 private:
 
@@ -61,4 +68,7 @@ private:
 	float slowTime_;
 	int slowCount_;
 	bool isSlow_;
+	bool isSlowP_;
+	float stopTime_;
+	bool isStop_;
 };

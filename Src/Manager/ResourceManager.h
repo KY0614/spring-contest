@@ -32,6 +32,7 @@ public:
 		GAMEOVERBGM,
 		CLEARBGM,
 		CLEARSTAGE,
+		GAMEOVERA,
 	};
 
 	// 明示的にインステンスを生成する

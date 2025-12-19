@@ -21,6 +21,8 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
+	void SetCount(int count) { count_ = count; }
+
 private:
 	int count_;
 

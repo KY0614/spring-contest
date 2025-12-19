@@ -11,12 +11,18 @@ ShotBase::ShotBase(TYPE type, int baseModelId)
 ShotBase::~ShotBase(void)
 {
 }
-void ShotBase::CreateShot(VECTOR pos, VECTOR dir)
+void ShotBase::CreateShot(VECTOR pos, VECTOR dir ,VECTOR scl,float rad)
 {
     // 弾の発射位置を設定
     pos_ = pos;
     // 弾の発射方向の設定
     dir_ = dir;
+
+    scales_ = scl;
+
+    collisionRadius_ = rad;
+
+    ChangeAttack(ATTACK_HIT::ENEMY);
     //// 使用メモリ容量と読み込み時間の削減のため
     //// モデルデータをいくつもメモリ上に存在させない
     //modelId_ = MV1DuplicateModel(baseModelId_);
@@ -86,6 +92,11 @@ ShotBase::TYPE ShotBase::GetType(void)
     return type_;
 }
 
+ShotBase::ATTACK_HIT ShotBase::GetAttack(void)
+{
+    return attack_;
+}
+
 void ShotBase::SetParam(void)
 {
 }
@@ -106,4 +117,19 @@ float ShotBase::GetRadius(void)
 void ShotBase::ReDir(void)
 {
     dir_ = VScale(dir_, -1.0f);
+    ChangeAttack(ATTACK_HIT::PLAYER);
 }
+
+void ShotBase::ChangeAttack(ATTACK_HIT attack)
+{
+    attack_ = attack;
+
+    switch (attack_)
+    {
+    case ShotBase::ATTACK_HIT::ENEMY:
+        break;
+    case ShotBase::ATTACK_HIT::PLAYER:
+        break;
+    }
+}
+

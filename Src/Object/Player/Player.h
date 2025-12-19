@@ -60,6 +60,8 @@ public:
 	static constexpr float PARRY_RADIUS = 120.0f;//パリィ時の半径
 	static constexpr float ATTACK_RADIUS = 60.0f;//攻撃範囲
 
+	static constexpr float MAX_STOP_DIR = 30.0f;
+
 	// 標準の自己発光色
 	static constexpr COLOR_F COLOR_EMI_DEFAULT = { 0.5f, 0.5f, 0.5f, 0.5f };
 private:
@@ -91,6 +93,8 @@ private:
 	int parrySE_;
 	int guardSE_;
 	int slouSE_;
+
+	int stopDir_;
 
 	Camera* camera_;
 
@@ -159,6 +163,9 @@ public:
 	float GetCollisionRadiusGS();
 	float GetCollisionRadiusH();
 	float GetAttackRange();
+	bool GetSlow();
+	bool GetStop();
+
 
 	void DelayRotate();
 };

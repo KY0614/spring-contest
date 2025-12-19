@@ -18,7 +18,7 @@ void EnemyU::SetParam(void)
 	moveSpeed_ = 0.0f;
 	spaen_ = 0.8f;
 
-	collisionRadius_ = 60.0f;
+	collisionRadius_ = 120.0f;
 	isAlive_ = true;
 }
 
