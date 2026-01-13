@@ -42,7 +42,7 @@ public:
 	static constexpr float AVOID_ROLL = 20.0f;//‰ñ”ğ‰ñ“]—Ê
 	static constexpr float AVOID_MAX_ROLL = 360.0f;//‰ñ”ğÅ‘å‰ñ“]—Ê
 
-	static constexpr float LOST_HP = 20.0f;//HPÁ”ï—Ê
+	static constexpr float LOST_HP = 10.0f;//HPÁ”ï—Ê
 	static constexpr float LOST_SP = 30.0f;//SPÁ”ï—Ê
 	static constexpr float LOST_GP = 20.0f;//GPÁ”ï—Ê
 
