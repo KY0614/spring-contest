@@ -480,27 +480,6 @@ VECTOR AsoUtility::VNormalize(const VECTOR& v)
     return VNorm(v);
 }
 
-float AsoUtility::NormalizeAngle(float rad)
-{
-    while (rad > DX_PI)
-    {
-        rad -= DX_TWO_PI;
-    }
-    while (rad < -DX_PI)
-    {
-        rad += DX_TWO_PI;
-    }
-    return rad;
-
-}
-
-float AsoUtility::LerpAngle(float from, float to, float t)
-{
-    float diff = NormalizeAngle(to - from); // Å’ZŒo˜H‚ÌŠp“x·‚ðŒvŽZ
-    return from + diff * t; // ·•ª‚¾‚¯•âŠÔ‚µ‚Ä‘«‚·
-
-}
-
 double AsoUtility::AngleDeg(const VECTOR& from, const VECTOR& to)
 {
     // sqrt(a) * sqrt(b) = sqrt(a * b) -- valid for real numbers
@@ -536,23 +515,21 @@ void AsoUtility::DrawLineDir(const VECTOR& pos, const VECTOR& dir, int color, fl
     DrawSphere3D(ePos, 5.0f, 5, color, color, true);
 }
 
-void AsoUtility::DrawLineXYZ(const VECTOR& pos, const Quaternion& rot, float len)
+void AsoUtility::DrawLineXYZ(const VECTOR& pos, const MATRIX& rot, float len)
 {
 
     VECTOR dir;
 
     // X
-    dir = rot.GetRight();
+    dir = VTransform(AsoUtility::DIR_R, rot);
     DrawLineDir(pos, dir, 0xff0000, len);
 
     // Y
-    dir = rot.GetUp();
+    dir = VTransform(AsoUtility::DIR_U, rot);
     DrawLineDir(pos, dir, 0x00ff00, len);
 
     // Z
-    dir = rot.GetForward();
+    dir = VTransform(AsoUtility::DIR_F, rot);
     DrawLineDir(pos, dir, 0x0000ff, len);
 
 }
-
-

@@ -1,15 +1,12 @@
 #pragma once
 
 #include "SceneBase.h"
-class Camera;
+
 
 class TitleScene : public SceneBase
 {
 
 public:
-
-
-
 
 	// コンストラクタ
 	TitleScene(void);
@@ -21,43 +18,24 @@ public:
 	void Update(void) override;
 	void Draw(void) override;
 
-	void SetCount(int count) { count_ = count; }
-
 private:
+
+	
+	int img_;//画像
+	int backImg_;//画像
+	int imgr_;
+	int imgBlock_;
+	float rotate_;	//角度
 	int count_;
+	int cr_;
+	int loopCount;						//文字カウント
+	int FontHandle;
+	int StrLen;
+	bool moziFlag;						//文字フラグ
 
+	int bgmHandle_;						//BGM
+	int seDecision_;					//決定音
 
+	void InitSoundEffect();
 
-	bool sousa_;
-	
-	int stageId_;
-	int enemyMId_;
-	int enemyRId_;
-	int enemyUId_;
-	int playerId_;
-	VECTOR stagePos_;
-	VECTOR stageScale_;
-	VECTOR stagelocalRot_;
-	VECTOR stageRot_;
-	VECTOR enemyMPos_;
-	VECTOR enemyMScale_;
-	VECTOR enemyMlocalRot_;
-	VECTOR enemyMRot_;
-	VECTOR enemyRPos_;
-	VECTOR enemyRScale_;
-	VECTOR enemyRlocalRot_;
-	VECTOR enemyRRot_;
-	VECTOR enemyUPos_;
-	VECTOR enemyUScale_;
-	VECTOR enemyUlocalRot_;
-	VECTOR enemyURot_;
-	VECTOR playerPos_;
-	VECTOR playerScale_;
-	VECTOR playerlocalRot_;
-	VECTOR playerRot_;
-
-
-	Camera* camera_;
-	
-	
 };

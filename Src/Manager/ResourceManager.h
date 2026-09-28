@@ -12,27 +12,11 @@ public:
 	// リソース名
 	enum class SRC
 	{
-		PLAYER,
-		ENEMYM,
-		ENEMYR,
-		ENEMYU,
-		EFFCT1,
-		AVOID,
-		SLOU,
-		ATTACK,
-		PARRY,
-		BREAK,
-		GUARD,
-		NODAME,
-		DAMAGE,
-		HIT,
-		STAGE,
-		TITLEBGM,
-		GAMEBGM,
-		GAMEOVERBGM,
-		CLEARBGM,
-		CLEARSTAGE,
-		GAMEOVERA,
+		TITLE,
+		TITLER,
+		SELECT,//セレクト
+		BLOCK,	//ブロック
+		PLAYER,//プレイヤー
 	};
 
 	// 明示的にインステンスを生成する

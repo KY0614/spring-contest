@@ -6,8 +6,8 @@
 #define mainCamera SceneManager::GetInstance().GetCamera().lock()
 
 class SceneBase;
-class Timer;
 class Fader;
+class Camera;
 
 class SceneManager
 {
@@ -18,19 +18,13 @@ public:
 	enum class SCENE_ID
 	{
 		NONE,
-		
+		SELECT,
 		TITLE,
 		GAME,
-		GAMEOVER,
-		CLEAR,
-		
-	};
-
-	enum class MANEW_SERECT
-	{
-		GAME_END,
-		TITLE,
-		EXIT,
+		EASY,
+		NORMAL,
+		HARD,
+		GAMECLEAR,
 	};
 	
 	// インスタンスの生成
@@ -59,25 +53,8 @@ public:
 	// デルタタイムの取得
 	float GetDeltaTime(void) const;
 
-
-
-	//// カメラの取得
-	//Camera* GetCamera(void) const;
-
-	void State(void);
-
-	//文字のX 座標
-	static const int TEXT_POS_X = 400;
-	//文字のY 座標
-	static const int TEXT_POS_Y = 200;
-
-	// 文字の大きさ(大)
-	static const int TEXT_SIZE_LARGE = 100;
-	// 文字の大きさ(小)
-	static const int TEXT_SIZE_SMALL = 16;
-
-	//ディレイマックス
-	static const int DELAY_MAX = 10;
+	// カメラの取得
+	std::weak_ptr<Camera> GetCamera(void) const;
 
 private:
 
@@ -95,23 +72,12 @@ private:
 	// 各種シーン
 	std::unique_ptr<Fader> fader_;
 
-	//タイマー
-	Timer* timer_;
-
-
-	MANEW_SERECT manewSerect_;
+	// カメラ
+	std::shared_ptr<Camera> camera_;
 
 	// シーン遷移中判定
 	bool isSceneChanging_;
 
-
-	//メニュー関連
-	int delayCount_;
-	bool stateFlag_;
-	bool isUp_;
-	bool isDown_;
-	bool isUpStick_;
-	bool isDownStick_;
 	// デルタタイム
 	std::chrono::system_clock::time_point preTime_;
 	float deltaTime_;
@@ -133,6 +99,4 @@ private:
 	// フェード
 	void Fade(void);
 
-	bool manew_;
-	int count_;
 };

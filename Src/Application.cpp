@@ -3,9 +3,6 @@
 #include "Manager/InputManager.h"
 #include "Manager/ResourceManager.h"
 #include "Manager/SceneManager.h"
-#include "Manager/SoundManager.h"
-#include "Fps/FpsControll.h"
-#include "05_FPS制御/FpsController.h"
 #include "Application.h"
 
 Application* Application::instance_ = nullptr;
@@ -13,7 +10,6 @@ Application* Application::instance_ = nullptr;
 const std::string Application::PATH_IMAGE = "Data/Image/";
 const std::string Application::PATH_MODEL = "Data/Model/";
 const std::string Application::PATH_EFFECT = "Data/Effect/";
-const std::string Application::PATH_SOUND = "Data/Sound/";
 
 void Application::CreateInstance(void)
 {
@@ -37,9 +33,8 @@ void Application::Init(void)
 
 	// ウィンドウサイズ
 	SetGraphMode(SCREEN_SIZE_X, SCREEN_SIZE_Y, 32);
-	ChangeWindowMode(false);
-	// FPS制御初期化
-	fpsController_ = new FpsController(FRAME_RATE);
+	ChangeWindowMode(true);
+
 	// DxLibの初期化
 	SetUseDirect3DVersion(DX_DIRECT3D_11);
 	isInitFail_ = false;
@@ -61,10 +56,6 @@ void Application::Init(void)
 
 	// シーン管理初期化
 	SceneManager::CreateInstance();
-
-	SoundManager::CreateInstance();
-
-	exitFlag_ = false;
 }
 
 void Application::Run(void)
@@ -73,19 +64,16 @@ void Application::Run(void)
 	auto& sceneManager = SceneManager::GetInstance();
 
 	// ゲームループ
-	while (ProcessMessage() == 0 && (exitFlag_ == false))
+	while (ProcessMessage() == 0 && CheckHitKey(KEY_INPUT_ESCAPE) == 0)
 	{
-		//FpsControll_Update();
 		inputManager.Update();
 		sceneManager.Update();
 
 		sceneManager.Draw();
-		// 平均FPS描画
-		//fpsController_->Draw();
+
 
 		ScreenFlip();
-		// 理想FPS経過待ち
-		fpsController_->Wait();
+
 	}
 
 }
@@ -107,8 +95,7 @@ void Application::Destroy(void)
 	}
 
 	delete instance_;
-	// FPS制御メモリ解放
-	//delete fpsController_;
+
 }
 
 bool Application::IsInitFail(void) const
@@ -120,8 +107,6 @@ bool Application::IsReleaseFail(void) const
 {
 	return isReleaseFail_;
 }
-
-
 
 Application::Application(void)
 {
@@ -139,16 +124,4 @@ void Application::InitEffekseer(void)
 	SetChangeScreenModeGraphicsSystemResetFlag(FALSE);
 
 	Effekseer_SetGraphicsDeviceLostCallbackFunctions();
-}
-
-bool Application::GetExit(void) const
-{
-	return exitFlag_;
-}
-
-void Application::SetExit(bool exit)
-{
-
-	exitFlag_ = exit;
-
 }
